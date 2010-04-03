@@ -23,7 +23,7 @@
   <groupId>org.liveSense</groupId>
   <artifactId>org.liveSense.utils</artifactId>
   <packaging>bundle</packaging>
-  <version>1.0.2</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>liveSense Utils</name>
     <build>
         <plugins>
