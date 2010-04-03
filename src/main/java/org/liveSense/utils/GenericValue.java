@@ -1,11 +1,13 @@
 package org.liveSense.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
+import javax.jcr.Binary;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -40,7 +42,6 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 		} else {
 
 			Value value = new Value() {
-
 				public String getString() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, String.class);
@@ -114,6 +115,63 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 						return PropertyType.UNDEFINED;
 					}
 				}
+
+				public Binary getBinary() throws RepositoryException {
+					return new Binary() {
+
+						InputStream is;
+						int offs = 0;
+						private InputStream getStreamFromValue() {
+							try {
+								return converter.convert(inValue, InputStream.class);
+							} catch (ConverterException ex) {
+								log.warn("Cannot convert to InputStream " + inValue, ex);
+								throw new UnsupportedOperationException("Cannot convert to InputStream " + inValue);
+							}
+						}
+
+						public InputStream getStream() throws RepositoryException {
+							if (is == null) is = getStreamFromValue();
+							return is;
+						}
+
+						public int read(byte[] bytes, long l) throws IOException, RepositoryException {
+							if (is == null) is = getStreamFromValue();
+							int readed =  is.read(bytes, offs, (int)l);
+							offs+=readed;
+							return readed;
+						}
+
+						public long getSize() throws RepositoryException {
+							if (is == null) is = getStreamFromValue();
+							try {
+								return is.available();
+							} catch (IOException ex) {
+								throw new RepositoryException(ex.getMessage());
+							}
+						}
+
+						public void dispose() {
+							if (is == null) is = getStreamFromValue();
+							try {
+								is.close();
+							} catch (IOException ex) {
+								log.error(ex.getMessage());
+							}
+
+						}
+					};
+				}
+
+				public BigDecimal getDecimal() throws ValueFormatException, RepositoryException {
+					try {
+						return converter.convert(inValue, BigDecimal.class);
+					} catch (ConverterException ex) {
+						log.warn("Cannot convert to BigDecimal " + inValue, ex);
+						throw new UnsupportedOperationException("Cannot convert to BigDecimal " + inValue);
+					}
+				}
+
 			};
 			return new GenericValue(value);
 		}

@@ -78,43 +78,16 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>1.0</version>
-            <optional>false</optional>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>3.8.1</version>
-          <scope>test</scope>
-        </dependency>
-
-        <dependency>
-           <groupId>net.sf.transmorph</groupId>
-           <artifactId>transmorph</artifactId>
-           <version>3.0.2</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.9.RC1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
             <version>2.0.9-SNAPSHOT</version>
             <type>bundle</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.launchpad.base</artifactId>
-            <version>2.1.1-SNAPSHOT</version>
-            <type>bundle</type>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>2.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -123,30 +96,51 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-jcr-commons</artifactId>
-            <version>1.6.0</version>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.log</artifactId>
+            <version>2.0.7-SNAPSHOT</version>
+            <type>bundle</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
+            <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>1.4.0</version>
-            <type>bundle</type>
+            <version>4.2.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.7-SNAPSHOT</version>
             <type>bundle</type>
         </dependency>
         <dependency>
+            <groupId>net.sf.transmorph</groupId>
+            <artifactId>transmorph</artifactId>
+            <version>3.0.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.8.2</version>
+            <artifactId>commons-beanutils-core</artifactId>
+            <version>1.8.3</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <version>2.0.0</version>
+            <type>bundle</type>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
             <type>jar</type>
         </dependency>
     </dependencies>
-	<profiles>		<profile>
+	<profiles>
+		<profile>
 			<id>git-push</id>
 			<build>
 				<plugins>
@@ -202,4 +196,7 @@
 		</profile>
 	</profiles>
 </project>
+
+
+
 

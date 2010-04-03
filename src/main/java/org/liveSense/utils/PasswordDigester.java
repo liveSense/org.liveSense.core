@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import org.apache.jackrabbit.util.Text;
 
+
 public class PasswordDigester {
 
     String password;
