@@ -34,6 +34,7 @@ public abstract class AbstractSlingBean {
 	private static final Logger log = LoggerFactory.getLogger(AbstractSlingBean.class);
 	public ResourceBundle resources = null;
 	RequestWrapper requestWrapper = null;
+	String authToken;
 
 
 	public static String getContent(Node n, Locale locale) {
@@ -155,35 +156,48 @@ public abstract class AbstractSlingBean {
 
 	public abstract void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response, Node currentNode, SlingScriptHelper scriptHelper);
 
+	public abstract ResourceBundle getResourceBundle();
 
 	public void initialize(SlingHttpServletRequest request, SlingHttpServletResponse response, Node currentNode, SlingScriptHelper scriptHelper, String i18nResourceClass) throws IOException {
+		initialize(request, response, currentNode, scriptHelper, i18nResourceClass, null);
+	}
+	public void initialize(SlingHttpServletRequest request, SlingHttpServletResponse response, Node currentNode, SlingScriptHelper scriptHelper, String i18nResourceClass, Locale locale) throws IOException {
 		this.currentNode = currentNode;
 		this.scriptHelper = scriptHelper;
 		session = request.getSession(false);
 
+		/*
 		locale = request.getLocale();
-		if (locale == null) {
-			Configurator config = scriptHelper.getService(Configurator.class);
-			locale = config.getDefaultLocale();
-		}
+		 * 
+		 */
+		requestWrapper = new RequestWrapper(request, null);
 
-		requestWrapper = new RequestWrapper(request, locale);
+		if (requestWrapper.getLocale() == null) {
+			Configurator config = scriptHelper.getService(Configurator.class);
+			requestWrapper.setLocale(config.getDefaultLocale());
+		}
 		userName = requestWrapper.getUserName();
 		authenticated = requestWrapper.isAuthenticated();
-		locale = requestWrapper.getLocale();
-		
+		this.locale = requestWrapper.getLocale();
+		if (locale != null) this.locale = locale;
 		// Get the user properties
 		currentProps = new JcrNodeWrapper(currentNode, locale); //helper.getNodeProperties(currentNode);
 		
 		// Get resource bundle
+		/*
 		try {
 			resources = ResourceBundle.getBundle(i18nResourceClass, getLocale());
 		} catch (MissingResourceException ex) {
 			log.error("Canot find resource bundle "+i18nResourceClass+" "+getLocale());
 			resources = null;
-		}
-		message = new I18nResourceWrapper(resources);
+		} */
+		message = new I18nResourceWrapper(getResourceBundle());
 
+		/*
+		 * For cross domain cookie. We set AUTHTOKEN available for JSP-s
+		 */
+		authToken = (String)request.getAttribute("LIVESENSE_FORMAUTHHANDLER_AUTHTOKEN");
+		 
 		doInit(request, response, currentNode, scriptHelper);
 		/*
 		 * PROCESSING POST DATAS
@@ -279,7 +293,7 @@ public abstract class AbstractSlingBean {
 
 	}
 
-	public I18nResourceWrapper getMessage() {
+	public I18nResourceWrapper getMessages() {
 		return message;
 
 
@@ -324,5 +338,9 @@ public abstract class AbstractSlingBean {
 	public void setUserName(String userName) {
 		this.userName = userName;
 
+	}
+
+	public String getAuthToken() {
+		return authToken;
 	}
 }

@@ -1,5 +1,6 @@
 package org.liveSense.utils;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -74,5 +75,12 @@ public class I18nResourceWrapper extends HashMap<String, String> {
 		} else {
 			return null;
 		}
+	}
+
+	public String get(Object key, Object[] args) {
+		String message = this.get(key);
+		MessageFormat messageForm = new MessageFormat("");
+		messageForm.setLocale(bundle.getLocale());
+		return messageForm.format(message, args);
 	}
 }

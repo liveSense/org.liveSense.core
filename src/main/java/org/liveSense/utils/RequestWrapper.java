@@ -69,6 +69,7 @@ public class RequestWrapper {
 			authenticated = true;
 		}
 
+		// TODO Configurable precedence of locale settings
 		if (locale == null) {
 			locale = defaultLocale;
 		}
@@ -77,6 +78,8 @@ public class RequestWrapper {
 			locale = request.getLocale();
 		}
 
+		// If cookie have locale parameter,
+		// we override the request locale
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 
@@ -89,11 +92,13 @@ public class RequestWrapper {
 		}
 
 		// If session have locale
+		// Override all other settings
 		if (request.getSession(false) != null && request.getSession(false).getAttribute("locale") != null) {
 			locale = str2Locale((String)request.getSession(false).getAttribute("locale"));
 		}
 
 		// If URL parameter have a locale
+		// override all other settings
 		if (request.getParameter("locale") != null) {
 			// There is a language defined, so we setting it
 			locale = str2Locale(request.getParameter("locale"));

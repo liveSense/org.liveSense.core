@@ -29,8 +29,6 @@
 package org.liveSense.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Utility to base64 encode and decode a string.
