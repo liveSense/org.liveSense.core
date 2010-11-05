@@ -4,3 +4,4 @@ war/*
 .settings
 .project
 .classpath
+nbactions.xml
