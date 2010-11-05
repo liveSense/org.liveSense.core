@@ -62,12 +62,16 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Import-Package>
+                            *;resolution:=optional,
+                            !org.liveSense.utils.*
+                        </Import-Package>
                         <Export-Package>
-                            org.liveSense.utils.*;version=${pom.version}
+                            org.liveSense.core.*;version=${pom.version}
                         </Export-Package>
                         <Embed-Dependency>
                         	transmorph,
-							commons-beanutils-core
+				commons-beanutils-core
                         </Embed-Dependency>
                         <Include-Resource>
                             {maven-resources}
