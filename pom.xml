@@ -40,7 +40,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.2.0</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
@@ -67,7 +66,7 @@
                             !org.liveSense.utils.*
                         </Import-Package>
                         <Export-Package>
-                            org.liveSense.core.*;version=${pom.version}
+                            org.liveSense.core.*;version=${project.version}
                         </Export-Package>
                         <Embed-Dependency>
                         	transmorph,
@@ -82,7 +81,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.2</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
