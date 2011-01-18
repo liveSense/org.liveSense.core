@@ -23,7 +23,7 @@
   <groupId>org.liveSense</groupId>
   <artifactId>org.liveSense.core</artifactId>
   <packaging>bundle</packaging>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>liveSense Core services and utils</name>
     <build>
         <plugins>
@@ -50,10 +50,24 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>maven-sling-plugin</artifactId>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>maven-sling-plugin</artifactId>
+				<configuration>
+					<slingUrl>${slingUrl}</slingUrl>
+					<user>${user}</user>
+					<password>${password}</password>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-bundle</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -92,7 +106,6 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
             <version>2.1.0</version>
-	    <scope>provided</scope>
             <type>bundle</type>
         </dependency>
         <dependency>
@@ -119,7 +132,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
 			<scope>provided</scope>
 			<type>jar</type>
         </dependency>
@@ -133,7 +146,7 @@
         <dependency>
             <groupId>net.sf.transmorph</groupId>
             <artifactId>transmorph</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -152,7 +165,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.8.2</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
@@ -165,7 +178,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.9.RC1</version>
+            <version>1.6.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>
