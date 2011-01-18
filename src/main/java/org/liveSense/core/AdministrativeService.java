@@ -50,15 +50,24 @@ public class AdministrativeService {
             } else {
                 Iterator<String> iter = administrativeSessions.keySet().iterator();
 
+                HashMap<String, Session> deathSessions = new HashMap<String, Session>(); 
                 while (iter.hasNext()) {
                     String key = iter.next();
                     if (administrativeSessions.get(key).isLive()) {
                         return administrativeSessions.get(key);
                     } else {
-                        administrativeSessions.remove(key);
+                    	deathSessions.put(key, administrativeSessions.get(key));
                     }
                 }
 
+                // Removing death sessions
+                iter = deathSessions.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    administrativeSessions.remove(key);
+                }
+                
+                
                 Session newSession = repository.loginAdministrative(null);
                 administrativeSessions.put(newSession.toString(), newSession);
                 return newSession;
@@ -90,15 +99,19 @@ public class AdministrativeService {
     public void releaseAdministrativeSession(final Session session, boolean force) throws RepositoryException {
         synchronized (administrativeSessions) {
             if (session != null && session.isLive()) {
-                if (session.hasPendingChanges()) {
-                    session.save();
-                    if (force) {
-                        session.logout();
-                        administrativeSessions.remove(session.toString());
-                    }
-                } else {
-                    administrativeSessions.remove(session.toString());
-                }
+                try {
+                	if (session.hasPendingChanges()) {
+                        session.save();
+                        if (force) {
+                            session.logout();
+                        }
+                    } else {
+                        
+                    }					
+				} catch (Exception e) {
+				} finally {
+					administrativeSessions.remove(session.toString());
+				}
             }
         }
     }
@@ -107,15 +120,22 @@ public class AdministrativeService {
         synchronized(administrativeSessions) {
             Iterator<String> iter = administrativeSessions.keySet().iterator();
 
+            HashMap<String, Session> removableSessions = new HashMap<String, Session>();
             while (iter.hasNext()) {
                 String key = iter.next();
                 if (administrativeSessions.get(key).isLive()) {
                     administrativeSessions.get(key).logout();
-                    administrativeSessions.remove(key);
-                } else {
-                    administrativeSessions.remove(key);
                 }
+                removableSessions.put(key, administrativeSessions.get(key));
             }
+            
+            // Removing death sessions
+            iter = removableSessions.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                administrativeSessions.remove(key);
+            }
+
         }
         
     }
