@@ -45,15 +45,14 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            *;resolution:=optional,
-                            !org.liveSense.utils.*
+                            *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             org.liveSense.core.*;version=${project.version}
                         </Export-Package>
                         <Embed-Dependency>
                         	transmorph,
-				commons-beanutils-core
+							commons-beanutils-core
                         </Embed-Dependency>
                         <Include-Resource>
                             {maven-resources}
