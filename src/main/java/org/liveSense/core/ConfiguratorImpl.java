@@ -2,54 +2,42 @@ package org.liveSense.core;
 
 import java.util.Dictionary;
 import java.util.Locale;
+
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @scr.component label="%service.name"
- *                description="%service.description"
- *                immediate="true"
- * @scr.service
- * @
- */
+@Component(label="%service.name", description="%service.description", immediate=true)
+@Service
 public class ConfiguratorImpl implements Configurator {
 
     private static final Logger log = LoggerFactory.getLogger(ConfiguratorImpl.class);
-	/**
-	 * @scr.property    label="%digest.label"
-     *                  description="%digest.description"
-     *                  valueRef="DEFAULT_DIGEST"
-	 */
 	public static final String PAR_DIGEST_NAME = "pwd.digest";
 	public static final String DEFAULT_DIGEST = "sha1";
-	private String digest = DEFAULT_DIGEST;
+	
+    	@Property(name=PAR_DIGEST_NAME, label="%digest.label", description="%digest.desctiption", value=DEFAULT_DIGEST)
+    	private String digest = DEFAULT_DIGEST;
 
-        /**
-	 * @scr.property    label="%encoding.name"
-         *                  description="%encoding.description"
-         *                  valueRef="DEFAULT_ENCODING"
-	 */
 	public static final String PAR_ENCODING = "default.encoding";
 	public static final String DEFAULT_ENCODING = "utf-8";
+	
+	@Property(name=PAR_ENCODING, label="%encoding.name", description="%encoding.description", value=DEFAULT_ENCODING)
 	private String encoding = DEFAULT_ENCODING;
+	
+	public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
+	public static final long DEFAULT_SESSION_TIMEOUT = 10*60;
+	
+	@Property(name=PARAM_SESSION_TIMEOUT, label="%sessionTimeout.name", description="%sessionTimeout.description", longValue=DEFAULT_SESSION_TIMEOUT)
+	private Long sessionTimeout = DEFAULT_SESSION_TIMEOUT;
 
-    /**
-     * @scr.property    label="%sessionTimeout.name"
-     *                  description="%sessionTimeout.description"
-     *                  valueRef="DEFAULT_SESSION_TIMEOUT"
-     */
-    public static final String PARAM_SESSION_TIMEOUT = "sessionTimeout";
-    public static final Long DEFAULT_SESSION_TIMEOUT = new Long(10*60);
-    private Long sessionTimeout = DEFAULT_SESSION_TIMEOUT;
-
-	/**
-	 * @scr.property    label="%locale.name"
-	 *                  description="%locale.description"
-	 *                  valueRef="DEFAULT_LOCALE"
-	 */
 	public static final String PARAM_LOCALE = "locale";
-	public static final String DEFAULT_LOCALE = Locale.getDefault().toString();
+	public static final String DEFAULT_LOCALE = "en_US"; //Locale.getDefault().toString();
+	
+	@Property(name=PARAM_LOCALE, label="%locale.name", description="%locale.description", value=DEFAULT_LOCALE)
 	private String locale = DEFAULT_LOCALE;
 	private Locale loc = Locale.getDefault();
 
@@ -59,6 +47,7 @@ public class ConfiguratorImpl implements Configurator {
      * @param componentContext The OSGi <code>ComponentContext</code> of this
      *            component.
     */
+    @Activate
     protected void activate(ComponentContext componentContext) {
         Dictionary<?, ?> props = componentContext.getProperties();
      
