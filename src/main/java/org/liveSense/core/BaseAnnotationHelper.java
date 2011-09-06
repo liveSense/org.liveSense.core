@@ -32,12 +32,18 @@ public class BaseAnnotationHelper {
     public static Annotation[] findFieldAnnotation(Class<?> clazz, String fieldName) {
         Annotation[] annotations = null;
         try {
-            Field field = clazz.getDeclaredField(fieldName);
+			List<Field> fields = getAllFields(clazz);
+			Field field = null;
+			for (Field fld : fields) {
+				if (fld.getName().equals(fieldName)) {
+					field = fld;
+					break;
+				}
+			}
             if (field != null) {
                 annotations = field.getAnnotations();
             }
         } catch (SecurityException e) {
-        } catch (NoSuchFieldException e) {
         }
         return annotations;
     }
