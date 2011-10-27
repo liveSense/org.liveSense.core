@@ -50,8 +50,7 @@
                             org.liveSense.core.*;version=${project.version}
                         </Export-Package>
                         <Embed-Dependency>
-                        	transmorph,
-							commons-beanutils-core
+                        	transmorph
                         </Embed-Dependency>
                         <Include-Resource>
                             {maven-resources}
@@ -133,7 +132,7 @@
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
