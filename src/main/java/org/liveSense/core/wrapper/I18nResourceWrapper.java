@@ -10,36 +10,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 
 public class I18nResourceWrapper extends HashMap<String, String> {
 
-	/*
-	SlingHttpServletRequest slingRequest;
-
-	public static Locale getDefaultLocale(HttpServletRequest request) {
-		Locale locale = (Locale) request.getSession().getAttribute("locale");
-		if (locale == null) {
-			locale = request.getLocale();
-		}
-		return locale;
-	}
-
-	public static String getLocaleString(String key, SlingHttpServletRequest request) {
-		Locale locale = getDefaultLocale(request);
-		ResourceBundle bundle = request.getResourceBundle(locale);
-		return bundle.getString(key);
-	}
-
-	public I18nResourceWrapper(SlingHttpServletRequest slingRequest) {
-		this.slingRequest = slingRequest;
-	}
-
-
-
-	@Override
-	public String get(Object key) {
-		return getLocaleString((String) key, slingRequest);
-	}
-	 *
-	 */
-
 	ResourceBundle bundle;
 	boolean addMark = true;
 	public I18nResourceWrapper(ResourceBundle bundle) {
