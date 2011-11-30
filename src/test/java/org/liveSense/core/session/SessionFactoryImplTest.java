@@ -1,0 +1,205 @@
+package org.liveSense.core.session;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Categories.ExcludeCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class SessionFactoryImplTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(SessionFactoryImplTest.class); 
+
+	Session session = null; 
+	SessionFactory sessionFactory = null;
+	
+	
+	private void delay(long msec) {
+		try {
+			Thread.sleep(msec);
+		} catch (InterruptedException e) {
+		}
+	}
+
+	@Before
+	public void beforeTest() throws Throwable {
+		sessionFactory = SessionFactoryImpl.getInstance(100, 100, 100, 100);
+		session = sessionFactory.createDefaultSession();
+	}
+
+	@Test(expected=NoSuchMethodException.class)
+	public void test_WithoutConstructor() throws Throwable {
+		Session testSession = (Session)sessionFactory.createSession(TestSessionWrongImpl.class);
+	}
+
+	@Test
+	public void test_WitConstructor() throws Throwable {
+		Session testSession = (Session)sessionFactory.createSession(TestSessionImpl.class);
+		assertTrue("Session type", testSession instanceof TestSessionImpl);
+	}
+	
+	@Test
+	public void test_Timeout() {
+		session.setTimeout(100);
+		delay(1000);
+		assertTrue("Session timed out", session.isTimedOut());
+	}
+
+	@Test
+	public void test_NoTimeout() {
+		session.setTimeout(1000);
+		delay(50);
+		assertFalse("Session live", session.isTimedOut());
+	}
+
+	@Test
+	public void test_closeTest() {
+		session.setTimeout(1000);
+		delay(200);
+		session.close();
+		assertTrue("Session closed", session.isClosed());
+	}
+
+	@Test
+	public void test_multipleSessionHandling() throws Throwable {
+		ArrayList<Session> list = new ArrayList<Session>();
+		
+		for (int i = 0; i < 100; i++) {
+			Session sess = sessionFactory.createDefaultSession();
+			sess.setTimeout(100);
+			list.add(sess);
+		}
+		for (Session sess : list) {
+			Session session = sessionFactory.getSession(sess.getId());
+			assertFalse("Object is exists", session == null);
+			assertFalse("Object is timed out", sess.isTimedOut());
+		}
+		delay(1000);
+		for (Session sess : list) {
+			Session session = sessionFactory.getSession(sess.getId());
+			assertTrue("Object is exists", session == null);
+			assertTrue("Object is timed out", sess.isTimedOut());
+		}
+	}
+	
+	
+	private Boolean isTimeoutCallbackRunned = false;
+
+	@Test
+	public void test_timeoutCallback() {
+		isTimeoutCallbackRunned = false;
+		session.setTimeout(1000);
+		session.setTimeoutCallback(new SessionCallback() {
+			
+			public void handle(Session session) {
+				log.info("Running timeout callback");
+				isTimeoutCallbackRunned = true;
+			}
+		});
+
+		delay(50);
+		assertFalse("Session timeout callback is not runned", isTimeoutCallbackRunned);
+
+		// Waiting for callback
+		delay(1100);
+		assertTrue("Session timeout callback", isTimeoutCallbackRunned);
+	}
+
+	private Boolean isCloseCallbackRunned = false;
+	
+	@Test
+	public void test_closeCallback() {
+		isCloseCallbackRunned = false;
+		session.setTimeout(1000);
+		session.setCloseCallback(new SessionCallback() {
+			
+			public void handle(Session session) {
+				log.info("Running close callback");
+				isCloseCallbackRunned = true;
+			}
+		});
+		
+		delay(100);
+		assertFalse("Session close callback is not runned", isCloseCallbackRunned);
+		delay(1100);
+		assertTrue("Session close callback", isCloseCallbackRunned);
+	}	
+
+	@Test
+	public void test_closeTimeoutWithLongRunCloseCallback() {
+		session.setTimeout(100);
+		
+		log.info(System.currentTimeMillis()+" - test_closeTimeoutWithLongRunCloseCallback started");
+		
+		Thread th = new Thread() {
+			@Override
+			public void run() {
+				log.info(System.currentTimeMillis()+" - Thread run");
+
+				session.setCloseCallback(new SessionCallback() {
+					
+					public void handle(Session session) {
+						log.info(System.currentTimeMillis()+" - CloseCallback start");
+						delay(100);
+						log.info(System.currentTimeMillis()+" - CloseCallback stop");
+					}
+				});
+	
+			}
+		};
+		log.info(System.currentTimeMillis()+" - Thread start");
+		th.start();
+		delay(100);
+		assertFalse("Session timeout", session.isClosed());
+
+	}
+
+	
+	@Test
+	public void test_validityWithLongRunTimeoutCallback() {
+		isTimeoutCallbackRunned = false;
+		session.setTimeout(100);
+		
+		log.info(System.currentTimeMillis()+" - test_validityWithLongRunTimeoutCallback started");
+		
+		Thread th = new Thread() {
+			@Override
+			public void run() {
+				log.info(System.currentTimeMillis()+" - Thread run");
+
+				session.setTimeoutCallback(new SessionCallback() {
+					
+					public void handle(Session session) {
+						isTimeoutCallbackRunned = true;
+						log.info(System.currentTimeMillis()+" - TimeOutHandler start");
+						delay(100);
+						log.info(System.currentTimeMillis()+" - TimeOutHandler stop");
+					}
+				});
+	
+				delay(200);
+				// Have to fire Callback
+				log.info(System.currentTimeMillis()+" - (Thread) Session timeout check started");
+				assertTrue("Session timeout", session.isTimedOut());
+				log.info(System.currentTimeMillis()+" - (Thread) Session timeout check finished");
+
+			}
+		};
+		log.info(System.currentTimeMillis()+" - Thread start");
+		th.start();
+		delay(300);
+		log.info(System.currentTimeMillis()+" - Session timeout check started");
+		assertTrue("Session timeout", session.isTimedOut());
+		log.info(System.currentTimeMillis()+" - Session timeout check finished");
+
+	}
+
+}
