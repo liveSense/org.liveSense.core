@@ -29,7 +29,6 @@ public class SessionImplTest {
 		session = new SessionImpl();
 	}
 	
-	
 	@Test
 	public void test_Timeout() {
 		session.setTimeout(100);
@@ -144,7 +143,7 @@ public class SessionImplTest {
 		SessionEntry<Long> se = new SessionEntry<Long>() {
 			public void onClose(Session session, SessionEntry<Long> entry) {				
 			}
-			public void onError(Session session, SessionEntry<Long> entry, Throwable th) {
+			public void onError(Session session, SessionEntry<Long> entry, Throwable th, SessionEntry<?> errEntry) {
 			}
 			public Long getValue() {
 				return new Long(1);

@@ -202,4 +202,34 @@ public class SessionFactoryImplTest {
 
 	}
 
+	private boolean entryOnClose = false;
+	private boolean entryOnError = false;
+	@Test
+	public void test_EntryCallback() {
+		isTimeoutCallbackRunned = false;
+		session.setTimeout(100);
+		
+		SessionEntry<Long> se = new SessionEntry<Long>() {
+			public void onClose(Session session, SessionEntry<Long> entry) throws Exception {
+				entryOnClose = true;
+				throw new Exception("onClose");
+			}
+			public void onError(Session session, SessionEntry<Long> entry, Throwable th, SessionEntry<?> errEntry) {
+				entryOnError = true;
+			}
+			public Long getValue() {
+				return null;
+			}
+		};
+		session.put("TEST", se);
+		delay(10);
+		assertFalse("Session timeout", session.isTimedOut());
+		session.close();
+		delay(10);
+		assertTrue("Session entry onClose", entryOnClose);
+		assertTrue("Session entry onError", entryOnError);
+	}
+
+
+	
 }

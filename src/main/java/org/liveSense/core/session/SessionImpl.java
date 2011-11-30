@@ -28,18 +28,22 @@ public class SessionImpl implements Session {
 	private void propertiesOnCloseWithoutLock() {
 		// Call preperties callback
 		Throwable error = null;
+		SessionEntry err = null;
 		if (entries != null) {
 			for (SessionEntry<?> entry : entries.values()) {
 				if (error != null) {
 					try {
-						entry.onError(this, (SessionEntry) entry, error);
+						entry.onError(this, (SessionEntry) entry, error, err);
 					} catch (Throwable th) {
 					}
-				}
-				try {
-					entry.onClose(this, (SessionEntry)entry);
-				} catch (Throwable th) {
-					error = th;						
+				} else {
+					try {
+						entry.onClose(this, (SessionEntry)entry);
+					} catch (Throwable th) {
+						error = th;
+						err = entry;
+						entry.onError(this, (SessionEntry) entry, error, err);
+					}
 				}
 			}
 		}
