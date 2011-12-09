@@ -157,8 +157,6 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 				Object value = new GenericValue(prop).getGenericObject();
 				if (xssSecured && value instanceof String) {
 					return ((String) value).replaceAll("\\\"", "&quot;").replaceAll("\\<.*?\\>", "");
-				} else if (value instanceof ArrayList) {
-					return ((ArrayList) value).get(1);
 				} else {
 					return value;
 				}
