@@ -183,7 +183,7 @@ public class SessionImpl implements Session {
 		try {
 			lock.lock();
 			updateLastAccessWithoutLock();
-			if (entries == null) return null;
+			initEntriesWithoutLock();
 			return entries.get(key);
 		} catch (InterruptedException e) {
 			return null;
