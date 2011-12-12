@@ -131,7 +131,22 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 					log.error("XPATH PARENT error: ", e);
 				}
 				return new JcrNodeIteratorWrapper(nodes, locale);
+			}
 
+			// Test if SQL2 query
+			if (name.startsWith("JCR_SQL2:")) {
+				String query = name.replaceFirst("JCR_SQL2:", "").replaceAll("`", "\'");
+				Query q;
+				NodeIterator nodes = null;
+				QueryManager qm;
+				try {
+					qm = node.getSession().getWorkspace().getQueryManager();
+					q = qm.createQuery(query, javax.jcr.query.Query.JCR_SQL2);
+					nodes = q.execute().getNodes();
+				} catch (RepositoryException e) {
+					log.error("XPATH error: ", e);
+				}
+				return new JcrNodeIteratorWrapper(nodes, locale);
 			} else if (i18n && locale != null && node.hasProperty(name + "_" + locale)) {
 				Property prop = node.getProperty(name + "_" + locale);
 				Object value = new GenericValue(prop).getGenericObject();
