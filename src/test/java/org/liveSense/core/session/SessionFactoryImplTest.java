@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,8 +32,13 @@ public class SessionFactoryImplTest {
 
 	@Before
 	public void beforeTest() throws Throwable {
-		sessionFactory = SessionFactoryImpl.getInstance(100, 100, 100, 100);
+		sessionFactory = SessionFactoryImpl.getInstance(100, 100, 1000);
 		session = sessionFactory.createDefaultSession();
+	}
+	
+	@After
+	public void afterTest() throws Throwable {
+		sessionFactory.close();
 	}
 
 	@Test(expected=NoSuchMethodException.class)
@@ -204,6 +210,7 @@ public class SessionFactoryImplTest {
 
 	private boolean entryOnClose = false;
 	private boolean entryOnError = false;
+	
 	@Test
 	public void test_EntryCallback() {
 		isTimeoutCallbackRunned = false;
@@ -230,6 +237,30 @@ public class SessionFactoryImplTest {
 		assertTrue("Session entry onError", entryOnError);
 	}
 
+	@Test
+	public void test_CloseTimeout() {
+		isTimeoutCallbackRunned = false;
+		session.setTimeout(100);
+		
+		SessionEntry<Long> se = new SessionEntry<Long>() {
+			public void onClose(Session session, SessionEntry<Long> entry) throws Exception {
+				entryOnClose = true;
+				Thread.sleep(10000);
+				throw new Exception("onClose");
+			}
+			public void onError(Session session, SessionEntry<Long> entry, Throwable th, SessionEntry<?> errEntry) {
+				entryOnError = true;
+			}
+			public Long getValue() {
+				return null;
+			}
+		};
+		
+		long start = System.currentTimeMillis();
+		sessionFactory.close();
+		assertTrue("Session entry clsose Time < 5000", System.currentTimeMillis()-start < 5000);
+		
+	}
 
 	
 }

@@ -28,10 +28,9 @@ public class SessionFactoryImpl implements SessionFactory {
 	private Map<UUID, Session> simpleSessionTracker;
 	private ExecutorService closeTaskExecuter;
 	private ScheduledExecutorService timedOutSessionRemover;
-	long sessionTimeoutCheckInterval;
-	long closeTaskTimeout;
-	long defaultSessionTimeout;
-	long factoryCloseTimeout;
+	long sessionTimeoutCheckInterval = 100;  // 100 ms
+	long closeTaskTimeout = 60 * 1000;       // 1 minutes
+	long defaultSessionTimeout = 30 * 1000; // 30 sec
 	
 	private Runnable checkAndRemoveTimeOutedSession;
 	
@@ -108,12 +107,13 @@ public class SessionFactoryImpl implements SessionFactory {
 					
 					@Override
 					public void onClose(WeakReference<SessionFactory> factory, Session session) {
+						
 						session.close();
 						if (log.isDebugEnabled())
 							log.debug("Session closed successfully: "+session.getId());
 					}
 				}),
-			closeTaskTimeout, TimeUnit.SECONDS);
+			closeTaskTimeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {	
 			log.error("Could not complete close of the session: "+session.getId());
 		}
@@ -185,32 +185,30 @@ public class SessionFactoryImpl implements SessionFactory {
 	private SessionFactoryImpl() {
 	}
 	
-	public static SessionFactory getInstance(long defaultSessionTimeout, long sessionTimeoutCheckInterval, long sessionCloseTimeout, long factoryCloseTimeout) {
+	public static SessionFactory getInstance(long defaultSessionTimeout, long sessionTimeoutCheckInterval, long sessionCloseTimeout) {
 		if (factory == null) {
-			log.info("Creating liveSense Session Factory. \n   Default session timeout: {}\n   Session timeout check interval: {}\n   Session close timeout: {}\n    Factory close timeout: {} ", new Object[]{defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout, factoryCloseTimeout});
+			log.info("Creating liveSense Session Factory. \n   Default session timeout: {}\n   Session timeout check interval: {}\n   Session close timeout: {}\n    Factory close timeout: {} ", new Object[]{defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout});
 			factory = new SessionFactoryImpl();
 			factory.sessionTimeoutCheckInterval = sessionTimeoutCheckInterval;
 			factory.closeTaskTimeout = sessionCloseTimeout;
 			factory.defaultSessionTimeout = defaultSessionTimeout;
-			factory.factoryCloseTimeout = factoryCloseTimeout;
 			factory.createExecuters();
 		}
 		return factory;
 	}
-	
+
+	public static SessionFactory getInstance() {
+		if (factory == null) {
+			factory = new SessionFactoryImpl();
+			log.info("Creating liveSense Session Factory. \n   Default session timeout: {}\n   Session timeout check interval: {}\n   Session close timeout: {}\n    Factory close timeout: {} ", new Object[]{factory.defaultSessionTimeout, factory.sessionTimeoutCheckInterval, factory.closeTaskTimeout});
+		}
+		return factory;
+	}
+
 	public void close() {
-		try {
-			timedOutSessionRemover.awaitTermination(factoryCloseTimeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			log.error("Cannot complete Timed Out Session removal task", e);
-		}
-
-		try {
-			closeTaskExecuter.awaitTermination(factoryCloseTimeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			log.error("Cannot complete Close Task Executer", e);
-		}
-
+			timedOutSessionRemover.shutdown();
+			closeTaskExecuter.shutdown();
+			factory = null;
 	}
 	
 }

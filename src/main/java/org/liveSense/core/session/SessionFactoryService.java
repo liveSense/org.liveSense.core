@@ -46,11 +46,12 @@ public class SessionFactoryService implements SessionFactory {
 		sessionCloseTimeout = PropertiesUtil.toLong(bundleContext.getProperty(PROP_SESSION_CLOSE_TIMEOUT), DEFAULT_SESSION_CLOSE_TIMEOUT);
 		sessionTimeoutCheckInterval = PropertiesUtil.toLong(bundleContext.getProperty(PROP_SESSION_TIMEOUT_CHECK_INTERVAL), DEFAULT_SESSION_TIMEOUT_CHECK_INTERVAL);
 		factoryCloseTimeout = PropertiesUtil.toLong(bundleContext.getProperty(PROP_FACTORY_CLOSE_TIMEOUT), DEFAULT_FACTORY_CLOSE_TIMEOUT);
-		sessionFactory = SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout, factoryCloseTimeout);
+		sessionFactory = SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout);
 	}
 	
 	@Deactivate
 	protected void deactivate(BundleContext bundleContext) {
+		sessionFactory.close();
 	}
 
 	public Session getSession(UUID sessionId) {
