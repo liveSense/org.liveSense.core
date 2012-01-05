@@ -181,7 +181,7 @@ public class SessionFactoryImpl implements SessionFactory {
 		return ret;
 	}
 	
-	private static SessionFactoryImpl factory;
+	private static SessionFactoryImpl factory = null;
 	private SessionFactoryImpl() {
 	}
 	
@@ -201,6 +201,7 @@ public class SessionFactoryImpl implements SessionFactory {
 		if (factory == null) {
 			factory = new SessionFactoryImpl();
 			log.info("Creating liveSense Session Factory. \n   Default session timeout: {}\n   Session timeout check interval: {}\n   Session close timeout: {}\n    Factory close timeout: {} ", new Object[]{factory.defaultSessionTimeout, factory.sessionTimeoutCheckInterval, factory.closeTaskTimeout});
+			factory.createExecuters();
 		}
 		return factory;
 	}
