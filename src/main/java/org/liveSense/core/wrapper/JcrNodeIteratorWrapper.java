@@ -32,4 +32,33 @@ public class JcrNodeIteratorWrapper implements Iterator<JcrNodeWrapper> {
 		iterator.remove();
 	}
 
+	/**
+	 * @return the iterator
+	 */
+	public NodeIterator getIterator() {
+		return iterator;
+	}
+
+	/**
+	 * @param iterator the iterator to set
+	 */
+	public void setIterator(NodeIterator iterator) {
+		this.iterator = iterator;
+	}
+
+	/**
+	 * @return the locale
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+
+	/**
+	 * @param locale the locale to set
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	
 }
