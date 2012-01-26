@@ -45,18 +45,13 @@ public class RequestWrapper {
 	ResourceBundle resources;
 
 
-	private Locale str2Locale(String loc) {
-		// There is a language defined, so we setting it
-		Locale locale = null;
-		String[] localeParts = loc.split("_");
-		if (localeParts.length == 3) {
-			locale = new Locale(localeParts[0], localeParts[1], localeParts[2]);
-		} else if (localeParts.length == 2) {
-			locale = new Locale(localeParts[0], localeParts[1]);
-		} else if (localeParts.length == 1) {
-			locale = new Locale(localeParts[0]);
-		}
-		return locale;
+	public static Locale str2Locale(String lang) {
+		String[] locs = null;
+		if (lang != null) locs = lang.split("_");
+		if (locs !=null && locs.length > 2) return new Locale(locs[0], locs[1], locs[2]);
+		if (locs !=null && locs.length > 1) return new Locale(locs[0], locs[1]);
+		if (locs !=null && locs.length > 0) return new Locale(locs[0]);
+		return Locale.getDefault();
 	}
 	
 	public RequestWrapper(HttpServletRequest request, Locale defaultLocale) {
