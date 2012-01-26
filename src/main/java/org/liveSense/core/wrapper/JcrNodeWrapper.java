@@ -70,6 +70,9 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 			// If we wanna know the name
 			if ("name".equalsIgnoreCase(name)) {
 				return node.getName();
+			} else // If we wanna know the name
+			if ("primaryType".equalsIgnoreCase(name)) {
+				return node.getPrimaryNodeType().getName();
 			} else // If wanna know path
 			if ("path".equalsIgnoreCase(name)) {
 				return node.getPath();
@@ -144,7 +147,7 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 					q = qm.createQuery(query, javax.jcr.query.Query.JCR_SQL2);
 					nodes = q.execute().getNodes();
 				} catch (RepositoryException e) {
-					log.error("XPATH error: ", e);
+					log.error("JCR_SQL2 error: ", e);
 				}
 				return new JcrNodeIteratorWrapper(nodes, locale);
 			} else if (i18n && locale != null && node.hasProperty(name + "_" + locale)) {
@@ -190,4 +193,85 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 		}
 		return null;
 	}
+
+	/**
+	 * @return the node
+	 */
+	public Node getNode() {
+		return node;
+	}
+
+	/**
+	 * @param node the node to set
+	 */
+	public void setNode(Node node) {
+		this.node = node;
+	}
+
+	/**
+	 * @return the locale
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+
+	/**
+	 * @param locale the locale to set
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	/**
+	 * @return the xssSecured
+	 */
+	public boolean isXssSecured() {
+		return xssSecured;
+	}
+
+	/**
+	 * @param xssSecured the xssSecured to set
+	 */
+	public void setXssSecured(boolean xssSecured) {
+		this.xssSecured = xssSecured;
+	}
+
+	/**
+	 * @return the i18n
+	 */
+	public boolean isI18n() {
+		return i18n;
+	}
+
+	/**
+	 * @param i18n the i18n to set
+	 */
+	public void setI18n(boolean i18n) {
+		this.i18n = i18n;
+	}
+	
+	public String getName() {
+		return (String)get("name");
+	}
+
+	public String getPath() {
+		return (String)get("path");
+	}
+
+	public JcrNodeWrapper getParent() {
+		return (JcrNodeWrapper)get("parent");
+	}
+
+	public JcrNodeWrapper getExtension() {
+		return (JcrNodeWrapper)get("extension");
+	}
+
+	public JcrNodeIteratorWrapper getChilds() {
+		return (JcrNodeIteratorWrapper)get("childs");
+	}
+
+	public JcrNodeIteratorWrapper getXPathFromHere() {
+		return (JcrNodeIteratorWrapper)get("XPATH");
+	}
+
 }
