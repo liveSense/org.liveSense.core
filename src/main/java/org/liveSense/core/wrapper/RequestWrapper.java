@@ -17,7 +17,10 @@
 
 package org.liveSense.core.wrapper;
 
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.liveSense.core.wrapper.I18nResourceWrapper;
+
+import java.net.HttpRetryException;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -39,7 +42,7 @@ public class RequestWrapper {
 	 */
 	private final Logger log = LoggerFactory.getLogger(RequestWrapper.class);
 	HttpServletRequest request;
-	Locale locale;
+	Locale locale = null;
 	String userName;
 	boolean authenticated;
 	ResourceBundle resources;
@@ -95,10 +98,22 @@ public class RequestWrapper {
 
 		// If URL parameter have a locale
 		// override all other settings
-		if (request.getParameter("locale") != null) {
+		//if (request.getParameter("locale") != null) {
 			// There is a language defined, so we setting it
-			locale = str2Locale(request.getParameter("locale"));
-		}
+			HttpServletRequest recursiveRequest = request;
+			Locale recursiveLocale = null;
+			while (recursiveRequest != null && recursiveLocale == null) {
+				
+				if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale") != null) {
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString());
+					recursiveRequest = null;
+				} else {
+					recursiveLocale = str2Locale(request.getParameter("locale"));
+					recursiveRequest = null;
+				}
+			}
+			if (recursiveLocale != null) locale = recursiveLocale;
+		//}
 
 	}
 
