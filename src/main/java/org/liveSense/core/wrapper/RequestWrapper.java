@@ -18,6 +18,7 @@
 package org.liveSense.core.wrapper;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.liveSense.core.wrapper.I18nResourceWrapper;
 
 import java.net.HttpRetryException;
@@ -25,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -100,11 +103,13 @@ public class RequestWrapper {
 		// override all other settings
 		//if (request.getParameter("locale") != null) {
 			// There is a language defined, so we setting it
-			HttpServletRequest recursiveRequest = request;
+			ServletRequest recursiveRequest = request;
 			Locale recursiveLocale = null;
 			while (recursiveRequest != null && recursiveLocale == null) {
-				
-				if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale") != null) {
+				if ((recursiveRequest instanceof SlingHttpServletRequestWrapper) && ((SlingHttpServletRequestWrapper)recursiveRequest).getRequestParameter("locale") != null)  {
+					recursiveRequest = ((SlingHttpServletRequestWrapper)recursiveRequest).getRequest();
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString());
+				} else if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale") != null) {
 					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString());
 					recursiveRequest = null;
 				} else {
