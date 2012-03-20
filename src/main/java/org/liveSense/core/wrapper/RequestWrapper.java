@@ -50,14 +50,17 @@ public class RequestWrapper {
 	boolean authenticated;
 	ResourceBundle resources;
 
-
-	public static Locale str2Locale(String lang) {
+	public static Locale str2Locale(String lang, Locale defaultLocale) {
 		String[] locs = null;
 		if (lang != null) locs = lang.split("_");
 		if (locs !=null && locs.length > 2) return new Locale(locs[0], locs[1], locs[2]);
 		if (locs !=null && locs.length > 1) return new Locale(locs[0], locs[1]);
 		if (locs !=null && locs.length > 0) return new Locale(locs[0]);
-		return Locale.getDefault();
+		return defaultLocale;
+	}
+
+	public static Locale str2Locale(String lang) {
+		return str2Locale(lang, Locale.getDefault());
 	}
 	
 	public RequestWrapper(HttpServletRequest request, Locale defaultLocale) {
@@ -96,7 +99,7 @@ public class RequestWrapper {
 		// If session have locale
 		// Override all other settings
 		if (request.getSession(false) != null && request.getSession(false).getAttribute("locale") != null) {
-			locale = str2Locale((String)request.getSession(false).getAttribute("locale"));
+			locale = str2Locale((String)request.getSession(false).getAttribute("locale"), null);
 		}
 
 		// If URL parameter have a locale
@@ -108,12 +111,12 @@ public class RequestWrapper {
 			while (recursiveRequest != null && recursiveLocale == null) {
 				if ((recursiveRequest instanceof SlingHttpServletRequestWrapper) && ((SlingHttpServletRequestWrapper)recursiveRequest).getRequestParameter("locale") != null)  {
 					recursiveRequest = ((SlingHttpServletRequestWrapper)recursiveRequest).getRequest();
-					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString());
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString(), null);
 				} else if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale") != null) {
-					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString());
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString(), null);
 					recursiveRequest = null;
 				} else {
-					recursiveLocale = str2Locale(request.getParameter("locale"));
+					recursiveLocale = str2Locale(request.getParameter("locale"), null);
 					recursiveRequest = null;
 				}
 			}
@@ -131,7 +134,7 @@ public class RequestWrapper {
 	}
 
 	public Locale getLocale() {
-		return locale;
+		if (locale != null) return locale; else return Locale.getDefault();
 	}
 
 	public void setLocale(Locale locale) {
