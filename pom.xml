@@ -43,15 +43,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>
-                            *;resolution:=optional
-                        </Import-Package>
                         <Export-Package>
                             org.liveSense.core.*;version=${project.version}
                         </Export-Package>
-                        <Embed-Dependency>
-                        	transmorph
-                        </Embed-Dependency>
                         <Include-Resource>
                             {maven-resources}
                         </Include-Resource>
@@ -124,9 +118,9 @@
         <dependency>
             <groupId>net.sf.transmorph</groupId>
             <artifactId>transmorph</artifactId>
-            <version>3.1.0</version>
-            <type>jar</type>
+            <version>3.1.1</version>
         </dependency>
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
