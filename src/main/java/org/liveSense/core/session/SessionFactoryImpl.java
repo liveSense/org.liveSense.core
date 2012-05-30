@@ -28,7 +28,7 @@ public class SessionFactoryImpl implements SessionFactory {
 	private Map<UUID, Session> simpleSessionTracker;
 	private ExecutorService closeTaskExecuter;
 	private ScheduledExecutorService timedOutSessionRemover;
-	long sessionTimeoutCheckInterval = 100;  // 100 ms
+	long sessionTimeoutCheckInterval = 2000;  // 2000 ms
 	long closeTaskTimeout = 60 * 1000;       // 1 minutes
 	long defaultSessionTimeout = 30 * 1000; // 30 sec
 	

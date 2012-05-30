@@ -34,7 +34,9 @@
   <artifactId>org.liveSense.core</artifactId>
   <packaging>bundle</packaging>
   <version>1.0.1-SNAPSHOT</version>
-  <name>liveSense Core services and utils</name>
+  <name>liveSense :: Core</name>
+  <description>liveSense Core services and utils</description>
+
     <build>
 	<plugins>
             <plugin>
