@@ -1,18 +1,17 @@
 package org.liveSense.core.session;
 
-import java.util.UUID;
 
 public interface SessionFactory {
 		
-	public Session getSession(UUID sessionId);
+	public Session getSession(String sessionId);
 	
 	public void updateSession(Session session);
 	
-	public void updateSession(UUID sessionId);
+	public void updateSession(String sessionId);
 	
 	public void removeSession(Session session);
 	 
-	public void removeSession(UUID sessionId);
+	public void removeSession(String sessionId);
 	
 	public Session createDefaultSession() throws Throwable;
 	

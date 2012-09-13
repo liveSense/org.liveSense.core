@@ -1,6 +1,5 @@
 package org.liveSense.core.session;
 
-import java.util.UUID;
 
 public interface Session {
 
@@ -54,7 +53,7 @@ public interface Session {
 	 * Get the Unique UUID of the session
 	 * @return
 	 */
-	public UUID getId();
+	public String getId();
 		
 	/**
 	 * Closing the session. It calls all Entry's close method.

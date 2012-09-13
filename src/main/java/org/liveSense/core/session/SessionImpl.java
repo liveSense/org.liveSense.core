@@ -9,7 +9,7 @@ public class SessionImpl implements Session {
 	private SessionLock lock = new SessionLock();
 	private HashMap<Object, SessionEntry<?>> entries;
 	
-	private UUID id;
+	private String id;
 	private long lastAccess;
 	private SessionCallback timeoutCallback;
 	private SessionCallback closeCallback;
@@ -73,12 +73,12 @@ public class SessionImpl implements Session {
 	}
 
 	public SessionImpl(SessionFactory factory) {
-		id = UUID.randomUUID();
+		id = UUID.randomUUID().toString();
 		lastAccess = System.currentTimeMillis();
 		this.factory = new WeakReference<SessionFactory>(factory);
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 

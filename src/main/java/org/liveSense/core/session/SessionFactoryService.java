@@ -1,7 +1,5 @@
 package org.liveSense.core.session;
 
-import java.util.UUID;
-
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -46,44 +44,44 @@ public class SessionFactoryService implements SessionFactory {
 		sessionCloseTimeout = PropertiesUtil.toLong(bundleContext.getProperty(PROP_SESSION_CLOSE_TIMEOUT), DEFAULT_SESSION_CLOSE_TIMEOUT);
 		sessionTimeoutCheckInterval = PropertiesUtil.toLong(bundleContext.getProperty(PROP_SESSION_TIMEOUT_CHECK_INTERVAL), DEFAULT_SESSION_TIMEOUT_CHECK_INTERVAL);
 		factoryCloseTimeout = PropertiesUtil.toLong(bundleContext.getProperty(PROP_FACTORY_CLOSE_TIMEOUT), DEFAULT_FACTORY_CLOSE_TIMEOUT);
-		sessionFactory = SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout);
+		//sessionFactory = SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout);
 	}
 	
 	@Deactivate
 	protected void deactivate(BundleContext bundleContext) {
-		sessionFactory.close();
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).close();
 	}
 
-	public Session getSession(UUID sessionId) {
-		return sessionFactory.getSession(sessionId);
+	public Session getSession(String sessionId) {
+		return SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).getSession(sessionId);
 	}
 
 	public void updateSession(Session session) {
-		sessionFactory.updateSession(session);
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).updateSession(session);
 	}
 
-	public void updateSession(UUID sessionId) {
-		sessionFactory.updateSession(sessionId);
+	public void updateSession(String sessionId) {
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).updateSession(sessionId);
 	}
 
 	public void removeSession(Session session) {
-		sessionFactory.removeSession(session);
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).removeSession(session);
 	}
 
-	public void removeSession(UUID sessionId) {
-		sessionFactory.removeSession(sessionId);
+	public void removeSession(String sessionId) {
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).removeSession(sessionId);
 	}
 
 	public Session createDefaultSession() throws Throwable {
-		return sessionFactory.createDefaultSession();
+		return SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).createDefaultSession();
 	}
 
 	public Session createSession(@SuppressWarnings("rawtypes") Class clazz) throws Throwable {
-		return sessionFactory.createSession(clazz);
+		return SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).createSession(clazz);
 	}
 
 	public void close() {
-		sessionFactory.close();
+		SessionFactoryImpl.getInstance(defaultSessionTimeout, sessionTimeoutCheckInterval, sessionCloseTimeout).close();
 	}
 
 	

@@ -7,9 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +24,7 @@ public class SessionFactoryImpl implements SessionFactory {
 	
 	static final Logger log = LoggerFactory.getLogger(SessionFactoryImpl.class);
 	
-	private Map<UUID, Session> simpleSessionTracker;
+	private Map<String, Session> simpleSessionTracker;
 	private ExecutorService closeTaskExecuter;
 	private ScheduledExecutorService timedOutSessionRemover;
 	long sessionTimeoutCheckInterval = 2000;  // 2000 ms
@@ -36,7 +35,7 @@ public class SessionFactoryImpl implements SessionFactory {
 	
 	private void createExecuters() {
 		closeTaskExecuter = Executors.newCachedThreadPool();
-		simpleSessionTracker = new HashMap<UUID, Session>();
+		simpleSessionTracker = new HashMap<String, Session>();
 		timedOutSessionRemover = Executors.newSingleThreadScheduledExecutor();
 			
 		checkAndRemoveTimeOutedSession = new Runnable() {
@@ -45,12 +44,12 @@ public class SessionFactoryImpl implements SessionFactory {
 				if (log.isDebugEnabled())
 					log.debug("Running session timeout checker");
 				
-				Set<Entry<UUID, Session>> unlocked = null;
+				Set<Entry<String, Session>> unlocked = null;
 				
 				synchronized (simpleSessionTracker) {
-					unlocked = new HashSet<Map.Entry<UUID,Session>>(simpleSessionTracker.entrySet());
+					unlocked = new HashSet<Map.Entry<String,Session>>(simpleSessionTracker.entrySet());
 				}
-				for (Entry<UUID, Session> session : unlocked) {
+				for (Entry<String, Session> session : unlocked) {
 					// Refresing session
 					session.getValue().validate();
 					// If timed out
@@ -59,7 +58,8 @@ public class SessionFactoryImpl implements SessionFactory {
 						     log.debug("Removing timed out session: "+session.getValue().getId().toString());
 						session.getValue().close();
 						synchronized (simpleSessionTracker) {
-							simpleSessionTracker.remove(session.getValue().getId());
+							log.info("Session removed: "+session.getValue().getId().toString());
+							simpleSessionTracker.remove(session.getValue().getId().toString());
 						}
 
 					}
@@ -71,14 +71,18 @@ public class SessionFactoryImpl implements SessionFactory {
 	
 	}
 	
-	public Session getSession(UUID sessionId) {
+	public Session getSession(String sessionId) {
 
 		Session session = null;
 		synchronized (simpleSessionTracker) {
-			session = simpleSessionTracker.get(sessionId);
+			session = simpleSessionTracker.get(sessionId.toString());
 		}
 			
-		if (session != null) updateSession(session);
+		if (session != null) {
+			updateSession(session);
+		} else {
+			log.warn("Session not found: "+sessionId.toString());
+		}
 		return session;
 	}
 
@@ -89,7 +93,7 @@ public class SessionFactoryImpl implements SessionFactory {
 		}
 	}
 
-	public void updateSession(UUID sessionId) {
+	public void updateSession(String sessionId) {
 		updateSession(getSession(sessionId));
 	}
 
@@ -120,11 +124,12 @@ public class SessionFactoryImpl implements SessionFactory {
 
 		synchronized (simpleSessionTracker) {
 			// Removing reference from tracker
-			simpleSessionTracker.remove(session.getId());
+			log.info("Session removed: "+session.getId().toString());
+			simpleSessionTracker.remove(session.getId().toString());
 		}
 	}
 	 
-	public void removeSession(UUID sessionId) {
+	public void removeSession(String sessionId) {
 		removeSession(getSession(sessionId));
 	}
 	
@@ -172,7 +177,8 @@ public class SessionFactoryImpl implements SessionFactory {
 			ret = (Session)constructor.newInstance(constructorArgs);
 			ret.setTimeout(defaultSessionTimeout);
 			synchronized (simpleSessionTracker) {
-				simpleSessionTracker.put(ret.getId(), ret);
+				log.info("Session created: "+ret.getId().toString());
+				simpleSessionTracker.put(ret.getId().toString(), ret);
 			}
 		} catch (Throwable e) {
 			log.error("Could not instantiate class: "+clazz.getName(), e);
