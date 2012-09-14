@@ -1,17 +1,13 @@
 package org.liveSense.core.session;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +76,7 @@ public class SessionFactoryImplTest {
 		
 		for (int i = 0; i < 100; i++) {
 			Session sess = sessionFactory.createDefaultSession();
-			sess.setTimeout(100);
+			sess.setTimeout(1000);
 			list.add(sess);
 		}
 		for (Session sess : list) {
@@ -88,7 +84,7 @@ public class SessionFactoryImplTest {
 			assertFalse("Object is exists", session == null);
 			assertFalse("Object is timed out", sess.isTimedOut());
 		}
-		delay(1000);
+		delay(2000);
 		for (Session sess : list) {
 			Session session = sessionFactory.getSession(sess.getId());
 			assertTrue("Object is exists", session == null);
