@@ -17,19 +17,16 @@
 
 package org.liveSense.core.wrapper;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
-import org.liveSense.core.wrapper.I18nResourceWrapper;
-
-import java.net.HttpRetryException;
 import java.util.Enumeration;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +59,13 @@ public class RequestWrapper {
 	public static Locale str2Locale(String lang) {
 		return str2Locale(lang, Locale.getDefault());
 	}
+
 	
 	public RequestWrapper(HttpServletRequest request, Locale defaultLocale) {
+		this(request, defaultLocale, "locale");
+	}
+
+	public RequestWrapper(HttpServletRequest request, Locale defaultLocale, String localeKeyName) {
 		this.request = request;
 
 		userName = request.getRemoteUser();
@@ -90,7 +92,7 @@ public class RequestWrapper {
 
 			for (int i=0;i<cookies.length; i++) {
 				// If cookie have a locale
-				if (cookies[i].getName().equalsIgnoreCase("locale")) {
+				if (cookies[i].getName().equalsIgnoreCase(localeKeyName)) {
 					locale = str2Locale(cookies[i].getValue());
 				}
 			}
@@ -98,8 +100,8 @@ public class RequestWrapper {
 
 		// If session have locale
 		// Override all other settings
-		if (request.getSession(false) != null && request.getSession(false).getAttribute("locale") != null) {
-			locale = str2Locale((String)request.getSession(false).getAttribute("locale"), null);
+		if (request.getSession(false) != null && request.getSession(false).getAttribute(localeKeyName) != null) {
+			locale = str2Locale((String)request.getSession(false).getAttribute(localeKeyName), null);
 		}
 
 		// If URL parameter have a locale
@@ -109,14 +111,14 @@ public class RequestWrapper {
 			ServletRequest recursiveRequest = request;
 			Locale recursiveLocale = null;
 			while (recursiveRequest != null && recursiveLocale == null) {
-				if ((recursiveRequest instanceof SlingHttpServletRequestWrapper) && ((SlingHttpServletRequestWrapper)recursiveRequest).getRequestParameter("locale") != null)  {
+				if ((recursiveRequest instanceof SlingHttpServletRequestWrapper) && ((SlingHttpServletRequestWrapper)recursiveRequest).getRequestParameter(localeKeyName) != null)  {
 					recursiveRequest = ((SlingHttpServletRequestWrapper)recursiveRequest).getRequest();
-					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString(), null);
-				} else if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale") != null) {
-					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter("locale").getString(), null);
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter(localeKeyName).getString(), null);
+				} else if ((recursiveRequest instanceof SlingHttpServletRequest) && ((SlingHttpServletRequest)recursiveRequest).getRequestParameter(localeKeyName) != null) {
+					recursiveLocale = str2Locale(((SlingHttpServletRequest)recursiveRequest).getRequestParameter(localeKeyName).getString(), null);
 					recursiveRequest = null;
 				} else {
-					recursiveLocale = str2Locale(request.getParameter("locale"), null);
+					recursiveLocale = str2Locale(request.getParameter(localeKeyName), null);
 					recursiveRequest = null;
 				}
 			}
