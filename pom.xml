@@ -17,118 +17,123 @@
     specific language governing permissions and limitations
     under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-      <groupId>com.github.livesense</groupId>
-      <artifactId>org.liveSense.parent</artifactId>
-      <version>2-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.livesense</groupId>
+		<artifactId>org.liveSense.parent</artifactId>
+		<version>2-SNAPSHOT</version>
 		<relativePath>../org.liveSense.parent</relativePath>
-  </parent>
-  <scm>
-      <connection>scm:git:git://github.com/liveSense/org.liveSense.core.git</connection>
-      <developerConnection>scm:git:git://github.com/liveSense/org.liveSense.core.git</developerConnection>
-      <url>https://github.com/liveSense/org.liveSense.core</url>
-  </scm>
+	</parent>
+	<scm>
+		<connection>scm:git:git://github.com/liveSense/org.liveSense.core.git</connection>
+		<developerConnection>scm:git:git://github.com/liveSense/org.liveSense.core.git</developerConnection>
+		<url>https://github.com/liveSense/org.liveSense.core</url>
+	</scm>
 
-  <artifactId>org.liveSense.core</artifactId>
-  <packaging>bundle</packaging>
-  <version>1.0.1-SNAPSHOT</version>
-  <name>liveSense :: Core</name>
-  <description>liveSense Core services and utils</description>
+	<artifactId>org.liveSense.core</artifactId>
+	<packaging>bundle</packaging>
+	<version>1.0.1-SNAPSHOT</version>
+	<name>liveSense :: Core</name>
+	<description>liveSense Core services and utils</description>
 
-    <build>
-	<plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.liveSense.core.*;version=${project.version}
-                        </Export-Package>
-                        <Include-Resource>
-                            {maven-resources}
-                        </Include-Resource>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>
+							org.liveSense.core.*;version=${project.version}
+						</Export-Package>
+						<Include-Resource>
+							{maven-resources}
+						</Include-Resource>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-scr-plugin</artifactId>
 			</plugin>
 
-        </plugins>
-    </build>
-    <dependencies>
-    	<dependency>
-           <groupId>org.apache.sling</groupId>
-           <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-    	<dependency>
-           <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.osgi</artifactId>
-        </dependency>
-    	<dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.commons.osgi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+		</dependency>
 
 		<dependency>
-    		<groupId>org.apache.felix</groupId>
-    		<artifactId>org.apache.felix.scr.annotations</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
-		
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-jcr-commons</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.jcr.api</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr.annotations</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-        </dependency>
-            
-        <dependency>
-            <groupId>net.sf.transmorph</groupId>
-            <artifactId>transmorph</artifactId>
-            <version>3.1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-commons</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.jcr.api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.transmorph</groupId>
+			<artifactId>transmorph</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>10.0</version>
+		</dependency>
+	</dependencies>
 </project>
 
 
