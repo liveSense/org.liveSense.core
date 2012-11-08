@@ -3,13 +3,9 @@ package org.liveSense.core.session;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,10 +20,11 @@ public class SessionFactoryImpl implements SessionFactory {
 	
 	static final Logger log = LoggerFactory.getLogger(SessionFactoryImpl.class);
 	
-	private Map<String, Session> simpleSessionTracker;
+	private final Map<String, Session> simpleSessionTracker = new ConcurrentHashMap<String, Session>();
 	private ExecutorService closeTaskExecuter;
-	private ScheduledExecutorService timedOutSessionRemover;
-	long sessionTimeoutCheckInterval = 2000;  // 2000 ms
+	private ScheduledExecutorService cleaningExecuter;
+	
+	long sessionTimeoutCheckInterval = 500;  // 500 ms
 	long closeTaskTimeout = 60 * 1000;       // 1 minutes
 	long defaultSessionTimeout = 30 * 1000; // 30 sec
 	
@@ -35,48 +32,39 @@ public class SessionFactoryImpl implements SessionFactory {
 	
 	private void createExecuters() {
 		closeTaskExecuter = Executors.newCachedThreadPool();
-		simpleSessionTracker = new HashMap<String, Session>();
-		timedOutSessionRemover = Executors.newSingleThreadScheduledExecutor();
+		//simpleSessionTracker = new HashMap<String, Session>();
+		cleaningExecuter = Executors.newSingleThreadScheduledExecutor();
 			
 		checkAndRemoveTimeOutedSession = new Runnable() {
+
 			public void run() {
 
 				if (log.isDebugEnabled())
-					log.debug("Running session timeout checker");
+					log.info("Running session timeout checker");
 				
-				Set<Entry<String, Session>> unlocked = null;
-				
-				synchronized (simpleSessionTracker) {
-					unlocked = new HashSet<Map.Entry<String,Session>>(simpleSessionTracker.entrySet());
-				}
-				for (Entry<String, Session> session : unlocked) {
+				for (Entry<String, Session> session : simpleSessionTracker.entrySet()) {
 					// Refresing session
 					session.getValue().validate();
 					// If timed out
 					if (session.getValue().isTimedOut()) {
 						if (log.isDebugEnabled()) 
-						     log.debug("Removing timed out session: "+session.getValue().getId().toString());
+							log.debug("Removing timed out session: "+session.getValue().getId().toString());
 						session.getValue().close();
-						synchronized (simpleSessionTracker) {
-							log.info("Session removed: "+session.getValue().getId().toString());
-							simpleSessionTracker.remove(session.getValue().getId().toString());
-						}
-
+						log.info("Session removed: "+session.getValue().getId().toString());
+						simpleSessionTracker.remove(session.getValue().getId().toString());
 					}
 				}
 			}
 		};
 		
-		timedOutSessionRemover.scheduleAtFixedRate(checkAndRemoveTimeOutedSession, 0, sessionTimeoutCheckInterval, TimeUnit.MILLISECONDS);
+		cleaningExecuter.scheduleAtFixedRate(checkAndRemoveTimeOutedSession, 0, sessionTimeoutCheckInterval, TimeUnit.MILLISECONDS);
 	
 	}
 	
 	public Session getSession(String sessionId) {
 
 		Session session = null;
-		synchronized (simpleSessionTracker) {
-			session = simpleSessionTracker.get(sessionId.toString());
-		}
+		session = simpleSessionTracker.get(sessionId.toString());
 			
 		if (session != null) {
 			updateSession(session);
@@ -88,9 +76,7 @@ public class SessionFactoryImpl implements SessionFactory {
 
 	public void updateSession(Session session) {
 		if (session == null) return;
-		synchronized (simpleSessionTracker) {
-			session.refresh();
-		}
+		session.refresh();
 	}
 
 	public void updateSession(String sessionId) {
@@ -106,7 +92,7 @@ public class SessionFactoryImpl implements SessionFactory {
 		try {
 			if (log.isDebugEnabled())
 				log.debug("Executing close() in single thread on session: "+session.getId());
-			closeTaskExecuter.invokeAll((Collection<? extends Callable<Void>>) Arrays.asList(
+			closeTaskExecuter.invokeAll(Arrays.asList(
 				new SessionCloseTask(new WeakReference<SessionFactory>(this), session) {
 					
 					@Override
@@ -122,11 +108,9 @@ public class SessionFactoryImpl implements SessionFactory {
 			log.error("Could not complete close of the session: "+session.getId());
 		}
 
-		synchronized (simpleSessionTracker) {
-			// Removing reference from tracker
-			log.info("Session removed: "+session.getId().toString());
-			simpleSessionTracker.remove(session.getId().toString());
-		}
+		// Removing reference from tracker
+		log.info("Session removed: "+session.getId().toString());
+		simpleSessionTracker.remove(session.getId().toString());
 	}
 	 
 	public void removeSession(String sessionId) {
@@ -176,10 +160,8 @@ public class SessionFactoryImpl implements SessionFactory {
 			
 			ret = (Session)constructor.newInstance(constructorArgs);
 			ret.setTimeout(defaultSessionTimeout);
-			synchronized (simpleSessionTracker) {
-				log.info("Session created: "+ret.getId().toString());
-				simpleSessionTracker.put(ret.getId().toString(), ret);
-			}
+			log.info("Session created: "+ret.getId().toString());
+			simpleSessionTracker.put(ret.getId().toString(), ret);
 		} catch (Throwable e) {
 			log.error("Could not instantiate class: "+clazz.getName(), e);
 			throw e;
@@ -213,7 +195,7 @@ public class SessionFactoryImpl implements SessionFactory {
 	}
 
 	public void close() {
-			timedOutSessionRemover.shutdown();
+			cleaningExecuter.shutdown();
 			closeTaskExecuter.shutdown();
 			factory = null;
 	}

@@ -1,5 +1,6 @@
 package org.liveSense.core.session;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -39,14 +40,22 @@ public class SessionFactoryImplTest {
 
 	@Test(expected=NoSuchMethodException.class)
 	public void test_WithoutConstructor() throws Throwable {
-		Session testSession = (Session)sessionFactory.createSession(TestSessionWrongImpl.class);
+		Session testSession = sessionFactory.createSession(TestSessionWrongImpl.class);
 	}
 
 	@Test
 	public void test_WitConstructor() throws Throwable {
-		Session testSession = (Session)sessionFactory.createSession(TestSessionImpl.class);
+		Session testSession = sessionFactory.createSession(TestSessionImpl.class);
 		assertTrue("Session type", testSession instanceof TestSessionImpl);
 	}
+
+	@Test
+	public void test_TimeoutSet() {
+		session.setTimeout(10000);
+		assertEquals("Session time  out set", new Long(10000), new Long(session.getTimeout()));
+	}
+
+
 	
 	@Test
 	public void test_Timeout() {
@@ -131,7 +140,7 @@ public class SessionFactoryImplTest {
 		
 		delay(100);
 		assertFalse("Session close callback is not runned", isCloseCallbackRunned);
-		delay(1100);
+		delay(2100);
 		assertTrue("Session close callback", isCloseCallbackRunned);
 	}	
 

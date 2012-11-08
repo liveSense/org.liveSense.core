@@ -25,10 +25,10 @@ public class SessionFactoryService implements SessionFactory {
 	public static final String PROP_SESSION_TIMEOUT_CHECK_INTERVAL = "sessionTimeoutCheckInterval"; 
 	public static final String PROP_FACTORY_CLOSE_TIMEOUT = "factoryCloseTimeout"; 
 
-	public static final long DEFAULT_DEFAULT_SESSION_TIMEOUT = 60; 
-	public static final long DEFAULT_SESSION_CLOSE_TIMEOUT = 60; 
-	public static final long DEFAULT_SESSION_TIMEOUT_CHECK_INTERVAL = 10; 
-	public static final long DEFAULT_FACTORY_CLOSE_TIMEOUT = 2 * 60; 
+	public static final long DEFAULT_DEFAULT_SESSION_TIMEOUT = 60 * 1000; 
+	public static final long DEFAULT_SESSION_CLOSE_TIMEOUT = 60 * 1000; 
+	public static final long DEFAULT_SESSION_TIMEOUT_CHECK_INTERVAL = 100; 
+	public static final long DEFAULT_FACTORY_CLOSE_TIMEOUT = 2 * 60 * 1000; 
 
 	long defaultSessionTimeout = DEFAULT_DEFAULT_SESSION_TIMEOUT;
 	long sessionCloseTimeout = DEFAULT_SESSION_CLOSE_TIMEOUT;

@@ -1,12 +1,11 @@
 package org.liveSense.core.session;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +41,10 @@ public class SessionImplTest {
 		session.setTimeout(1000);
 		session.refresh();
 		assertFalse("Session live", session.isTimedOut());
-		delay(300);
+		delay(30);
 		session.refresh();
 		assertFalse("Session live", session.isTimedOut());
-		delay(800);
+		delay(80);
 		session.refresh();
 		assertFalse("Session live", session.isTimedOut());
 		delay(1200);
