@@ -55,9 +55,11 @@ public class JcrNodePropertiesWrapper extends HashMap<String, Object> {
 				return new JcrPropertyWrapper(node.getProperty(name + "_" + locale), locale, throwException);
 			} else if (locale != null && node.hasProperty(name + "_" + locale.getLanguage())) {
 				return new JcrPropertyWrapper(node.getProperty(name + "_" + locale.getLanguage()), locale, throwException);
-			} else { 
+			} else if (node.hasProperty(name)) { 
 				return new JcrPropertyWrapper(node.getProperty(name), locale, throwException);
-			} 
+			} else {
+				return null;
+			}
 		} catch (ClassCastException e) {
 			log.error("Cannot get property", e);
 			if (throwException) throw e;
