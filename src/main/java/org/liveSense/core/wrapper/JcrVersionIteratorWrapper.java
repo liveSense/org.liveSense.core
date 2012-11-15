@@ -3,24 +3,24 @@ package org.liveSense.core.wrapper;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.jcr.NodeIterator;
+import javax.jcr.version.VersionIterator;
 
-public class JcrNodeIteratorWrapper implements Iterator<JcrNodeWrapper> {
+public class JcrVersionIteratorWrapper implements Iterator<JcrNodeWrapper> {
 
-	NodeIterator iterator;
+	VersionIterator iterator;
 	Locale locale = null;
 	boolean throwException = true;
 
-	public JcrNodeIteratorWrapper(NodeIterator iterator) {
+	public JcrVersionIteratorWrapper(VersionIterator iterator) {
 		this.iterator = iterator;
 	}
 
-	public JcrNodeIteratorWrapper(NodeIterator iterator, Locale locale) {
+	public JcrVersionIteratorWrapper(VersionIterator iterator, Locale locale) {
 		this.iterator = iterator;
 		this.locale = locale;
 	}
 
-	public JcrNodeIteratorWrapper(NodeIterator iterator, Locale locale, boolean throwException) {
+	public JcrVersionIteratorWrapper(VersionIterator iterator, Locale locale, boolean throwException) {
 		this.iterator = iterator;
 		this.locale = locale;
 		this.throwException = throwException;
@@ -33,8 +33,8 @@ public class JcrNodeIteratorWrapper implements Iterator<JcrNodeWrapper> {
 	}
 
 	@Override
-	public JcrNodeWrapper next() {
-		return new JcrNodeWrapper(iterator.nextNode(), locale, throwException);
+	public JcrVersionWrapper next() {
+		return new JcrVersionWrapper(iterator.nextVersion(), locale, throwException);
 	}
 
 	@Override
@@ -45,14 +45,14 @@ public class JcrNodeIteratorWrapper implements Iterator<JcrNodeWrapper> {
 	/**
 	 * @return the iterator
 	 */
-	public NodeIterator getIterator() {
+	public VersionIterator getIterator() {
 		return iterator;
 	}
 
 	/**
 	 * @param iterator the iterator to set
 	 */
-	public void setIterator(NodeIterator iterator) {
+	public void setIterator(VersionIterator iterator) {
 		this.iterator = iterator;
 	}
 

@@ -1,54 +1,42 @@
 package org.liveSense.core.wrapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
+import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrNodeWrapper extends HashMap<String, Object> {
+public class JcrNodeWrapper {
+	private static final long serialVersionUID = -5396796006695329358L;
 
 	Node node;
 	Locale locale;
-	boolean xssSecured;
-	boolean i18n = false;
+	boolean throwException = true;
+	
 	private static final Logger log = LoggerFactory.getLogger(JcrNodeWrapper.class);
-
-	public JcrNodeWrapper(Node node, boolean xssSecured) {
-		this.node = node;
-		this.xssSecured = xssSecured;
-	}
 
 	public JcrNodeWrapper(Node node) {
 		this.node = node;
-		this.xssSecured = false;
-	}
-
-	public JcrNodeWrapper(Node node, boolean xssSecured, Locale locale) {
-		this.node = node;
-		this.xssSecured = xssSecured;
-		this.locale = locale;
 	}
 
 	public JcrNodeWrapper(Node node, Locale locale) {
 		this.node = node;
-		this.xssSecured = false;
 		this.locale = locale;
 	}
 
-	public JcrNodeWrapper(Node node, Locale locale, boolean i18n) {
+	public JcrNodeWrapper(Node node, Locale locale, boolean throwException) {
 		this.node = node;
-		this.xssSecured = false;
 		this.locale = locale;
-		this.i18n = i18n;
+		this.throwException = throwException;
 	}
 
 	@Override
@@ -56,144 +44,57 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 		try {
 			return node.getName();
 		} catch (RepositoryException e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage(), e);
 		}
-		return "";
 	}
 
-	@Override
-	public Object get(Object key) {
+	public JcrFileWrapper getFile() {
+		return new JcrFileWrapper(node, locale, throwException);
+	}
+	/*
+	private Object getProperty(Object key) {
 		try {
 
-			String name = (String) key;
-
-			// If we wanna know the name
-			if ("name".equalsIgnoreCase(name)) {
-				return node.getName();
-			} else // If we wanna know the name
-			if ("primaryType".equalsIgnoreCase(name)) {
-				return node.getPrimaryNodeType().getName();
-			} else // If wanna know path
-			if ("path".equalsIgnoreCase(name)) {
-				return node.getPath();
-			} else // Parent node
-			if ("parent".equalsIgnoreCase(name)) {
-				return new JcrNodeWrapper(node.getParent(), locale);
-			} else // File extension
-			if ("extension".equalsIgnoreCase(name)) {
-				int dot = node.getName().lastIndexOf(".");
-				String extension = node.getName().substring(dot + 1);
-				return extension;
-			} else // Child nodes
-			if ("childs".equalsIgnoreCase(name)) {
-				return new JcrNodeIteratorWrapper(node.getNodes(), locale);
-			} else // Internationalized property
-			if ("i18n".equalsIgnoreCase(name)) {
-				return new JcrNodeWrapper(node, locale, true);
-			}
-
-			// Test if query
-			if (name.startsWith("XPATH:")) {
-				String query = "/" + node.getPath() + name.replaceFirst("XPATH:", "").replaceAll("`", "\'");
-				Query q;
-				NodeIterator nodes = null;
-				QueryManager qm;
-				try {
-					qm = node.getSession().getWorkspace().getQueryManager();
-					q = qm.createQuery(query, javax.jcr.query.Query.XPATH);
-					nodes = q.execute().getNodes();
-				} catch (RepositoryException e) {
-					log.error("XPATH error: ", e);
-				}
-				return new JcrNodeIteratorWrapper(nodes, locale);
-			} else // Test if query
-			if (name.startsWith("XPATH ROOT:")) {
-				String query = name.replaceFirst("XPATH ROOT:", "").replaceAll("`", "\'");
-				Query q;
-				NodeIterator nodes = null;
-				QueryManager qm;
-				try {
-					qm = node.getSession().getWorkspace().getQueryManager();
-					q = qm.createQuery(query, javax.jcr.query.Query.XPATH);
-					nodes = q.execute().getNodes();
-				} catch (RepositoryException e) {
-					log.error("XPATH ROOT error: ", e);
-				}
-				return new JcrNodeIteratorWrapper(nodes, locale);
-			} else
-			if (name.startsWith("XPATH PARENT:")) {
-				String query = "/" + node.getParent().getPath() + name.replaceFirst("XPATH PARENT:", "").replaceAll("`", "\'");
-				Query q;
-				NodeIterator nodes = null;
-				QueryManager qm;
-				try {
-					qm = node.getSession().getWorkspace().getQueryManager();
-					q = qm.createQuery(query, javax.jcr.query.Query.XPATH);
-					nodes = q.execute().getNodes();
-				} catch (RepositoryException e) {
-					log.error("XPATH PARENT error: ", e);
-				}
-				return new JcrNodeIteratorWrapper(nodes, locale);
-			}
-
-			// Test if SQL2 query
-			if (name.startsWith("JCR_SQL2:")) {
-				String query = name.replaceFirst("JCR_SQL2:", "").replaceAll("`", "\'");
-				Query q;
-				NodeIterator nodes = null;
-				QueryManager qm;
-				try {
-					qm = node.getSession().getWorkspace().getQueryManager();
-					q = qm.createQuery(query, javax.jcr.query.Query.JCR_SQL2);
-					nodes = q.execute().getNodes();
-				} catch (RepositoryException e) {
-					log.error("JCR_SQL2 error: ", e);
-				}
-				return new JcrNodeIteratorWrapper(nodes, locale);
-			} else if (i18n && locale != null && node.hasProperty(name + "_" + locale)) {
+			String name = (String)key;
+			
+			if (locale != null && node.hasProperty(name + "_" + locale)) {
 				Property prop = node.getProperty(name + "_" + locale);
 				Object value = new GenericValue(prop).getGenericObject();
-				if (xssSecured && value instanceof String) {
-					return ((String) value).replaceAll("\\\"", "&quot;").replaceAll("\\<.*?\\>", "");
-				} else if (value instanceof ArrayList) {
+				if (value instanceof ArrayList) {
 					return ((ArrayList) value).get(1);
 				} else {
 					return value;
 				}
-			} else if (i18n && locale != null && node.hasProperty(name + "_" + locale.getLanguage())) {
+			} else if (locale != null && node.hasProperty(name + "_" + locale.getLanguage())) {
 				Property prop = node.getProperty(name + "_" + locale.getLanguage());
 				Object value = new GenericValue(prop).getGenericObject();
-				if (xssSecured && value instanceof String) {
-					return ((String) value).replaceAll("\\\"", "&quot;").replaceAll("\\<.*?\\>", "");
-				} else if (value instanceof ArrayList) {
+				if (value instanceof ArrayList) {
 					return ((ArrayList) value).get(1);
 				} else {
 					return value;
 				}
-			} else if (node.hasProperty(name)) {
+			} else { 
 				Property prop = node.getProperty(name);
 				Object value = new GenericValue(prop).getGenericObject();
-				if (xssSecured && value instanceof String) {
-					return ((String) value).replaceAll("\\\"", "&quot;").replaceAll("\\<.*?\\>", "");
-				} else {
-					return value;
-				}
-			} else if (node.hasNode(name)) {
-				return new JcrNodeWrapper(node.getNode(name), xssSecured, locale);
-			}
+				return value;
+			} 
+		} catch (ClassCastException e) {
+			log.error("Cannot get property", e);
+			if (throwException) throw e;
 		} catch (PathNotFoundException e) {
-			log.warn("PathNotFound", e);
-			return "PathNotFound";
+			log.error("Cannot get property", e);
+			if (throwException) throw new IllegalStateException(e.getMessage(), e);
 		} catch (RepositoryException e) {
-			log.warn("RepositoryError", e);
-			return "RepositoryError";
+			log.error("Cannot get property", e);
+			if (throwException) throw new IllegalStateException(e.getMessage(), e);
 		} catch (NullPointerException e) {
-			log.warn("PathNotFound", e);
-			return "PathNotFound";
+			log.error("Cannot get property", e);
+			if (throwException) throw e;
 		}
 		return null;
 	}
-
+	*/
+	
 	/**
 	 * @return the node
 	 */
@@ -222,56 +123,242 @@ public class JcrNodeWrapper extends HashMap<String, Object> {
 		this.locale = locale;
 	}
 
-	/**
-	 * @return the xssSecured
-	 */
-	public boolean isXssSecured() {
-		return xssSecured;
+
+	public String getName() throws RepositoryException {
+		try {
+			return node.getName();
+		} catch (RepositoryException e) {
+			log.error("Cannot get node name", e);
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	/**
-	 * @param xssSecured the xssSecured to set
-	 */
-	public void setXssSecured(boolean xssSecured) {
-		this.xssSecured = xssSecured;
+	public String getPath() throws RepositoryException {
+		try {
+			return node.getPath();
+		} catch (RepositoryException e) {
+			log.error("Cannot get node path", e);
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	/**
-	 * @return the i18n
-	 */
-	public boolean isI18n() {
-		return i18n;
+	public JcrNodeWrapper getParent() throws RepositoryException {
+		try {
+			return new JcrNodeWrapper(node.getParent(), locale, throwException);
+		} catch (RepositoryException e) {
+			log.error("Cannot get node parent", e);
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	/**
-	 * @param i18n the i18n to set
-	 */
-	public void setI18n(boolean i18n) {
-		this.i18n = i18n;
+	public String getExtension() throws RepositoryException {
+		int dot;
+		try {
+			dot = node.getName().lastIndexOf(".");
+			String extension = node.getName().substring(dot + 1);
+			return extension;
+		} catch (RepositoryException e) {
+			log.error("Cannot get node parent", e);
+			if (throwException) throw e;
+		}
+		return null;
+	}
+
+	public JcrNodeIteratorWrapper getNodes() throws RepositoryException {
+		try {
+			return new JcrNodeIteratorWrapper(node.getNodes(), locale, throwException);
+		} catch (RepositoryException e) {
+			log.error("Cannot get node parent", e);
+			if (throwException) throw e;
+		}
+		return null;
+	}
+
+	public int getDepth() throws RepositoryException {
+		try {
+			return node.getDepth();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return -1;
+	}
+
+	public boolean isNode() {
+		return node.isNode();
+	}
+
+	public boolean isNew() {
+		return node.isNew();
+	}
+
+	public boolean isModified() {
+		return node.isModified();
+	}
+
+	public JcrPropertyIteratorWrapper getPropertiesIterator() throws RepositoryException {
+		try {
+			return new JcrPropertyIteratorWrapper(node.getProperties(), locale, throwException);
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
 	
-	public String getName() {
-		return (String)get("name");
+//	public JcrNodePropertiesWrapper getPropertyValue() throws RepositoryException {
+//		return new JcrNodePropertiesWrapper(node, locale, throwException);
+//	}
+
+	public JcrNodePropertiesWrapper getProperties() throws RepositoryException {
+		return new JcrNodePropertiesWrapper(node, locale, throwException);
+	}
+	
+/*
+	public Map<String, JcrPropertyWrapper> getProperties() throws RepositoryException {
+		Map<String, JcrPropertyWrapper> properties = new HashMap<String, JcrPropertyWrapper>();
+		try {
+			PropertyIterator iter = node.getProperties();
+			while (iter.hasNext()) {
+				Property prop = iter.nextProperty();
+				properties.put(prop.getName(), new JcrPropertyWrapper(prop, locale, throwException));
+			}
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return properties;
+	}
+*/
+	
+	public String getIdentifier() throws RepositoryException {
+		try {
+			return node.getIdentifier();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	public String getPath() {
-		return (String)get("path");
+	public int getIndex() throws RepositoryException {
+		try {
+			return node.getIndex();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return -1;
 	}
 
-	public JcrNodeWrapper getParent() {
-		return (JcrNodeWrapper)get("parent");
+	public JcrPropertyIteratorWrapper getReferences() throws RepositoryException {
+		try {
+			return new JcrPropertyIteratorWrapper(node.getReferences(), locale, throwException);
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	public JcrNodeWrapper getExtension() {
-		return (JcrNodeWrapper)get("extension");
+	public JcrPropertyIteratorWrapper getWeakReferences() throws RepositoryException {
+		try {
+			return new JcrPropertyIteratorWrapper(node.getWeakReferences(), locale, throwException);
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	public JcrNodeIteratorWrapper getChilds() {
-		return (JcrNodeIteratorWrapper)get("childs");
+	public NodeType getPrimaryNodeType() throws RepositoryException {
+		try {
+			return node.getPrimaryNodeType();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
 
-	public JcrNodeIteratorWrapper getXPathFromHere() {
-		return (JcrNodeIteratorWrapper)get("XPATH");
+	public NodeType[] getMixinNodeTypes() throws RepositoryException {
+		try {
+			return node.getMixinNodeTypes();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
 	}
+
+	public NodeDefinition getDefinition() throws RepositoryException {
+		try {
+			return node.getDefinition();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
+	}
+
+	public boolean isLocked() throws RepositoryException {
+		try {
+			return node.isLocked();
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return false;
+	}
+	
+	
+	public JcrVersionIteratorWrapper getVersionHistoryIterator() throws RepositoryException {
+		try {
+			Session session = node.getSession();
+			VersionManager vm = session.getWorkspace().getVersionManager();
+		
+			VersionHistory history = null;
+			try {
+				history = vm.getVersionHistory(node.getPath());
+			} catch (UnsupportedRepositoryOperationException e) {
+				// Node is not versionable, so there is no versions
+			}
+			if (history == null) {
+				return new JcrVersionIteratorWrapper(null);
+			} else {
+				return new JcrVersionIteratorWrapper(history.getAllVersions(), locale, throwException);
+			}
+		} catch (RepositoryException e) {
+			if (throwException) throw e;
+		}
+		return null;
+	}
+	
+
+	public JcrNodeWrapper getFirstParentNodeByPrimaryType(String primaryType) throws RepositoryException {
+		try {
+			Node n = node;
+			while (n != null) {
+				try {
+					n = n.getParent();
+				} catch (ItemNotFoundException e) {
+					// this is the parent
+					n = null;
+				}
+				if (n == null) {
+					return null;
+				} else {
+					if (n.getPrimaryNodeType().getName().equals(primaryType)) {
+						return new JcrNodeWrapper(n, locale, throwException);
+					}
+				}
+			}
+		} catch (RepositoryException e) {
+			log.error("Cannot get node: ", e);
+			if (throwException) throw e;
+		}
+		return null;
+	}
+
+	public JcrQueryWrapper getSQL2Query() {
+		return new JcrQueryWrapper(javax.jcr.query.Query.JCR_SQL2, node, locale, throwException);
+	}
+
+	public JcrQueryWrapper getJQOMQuery() {
+		return new JcrQueryWrapper(javax.jcr.query.Query.JCR_JQOM, node, locale, throwException);
+	}
+	
 
 }
