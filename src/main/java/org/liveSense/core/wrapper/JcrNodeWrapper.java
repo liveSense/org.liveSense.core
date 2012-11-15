@@ -167,7 +167,7 @@ public class JcrNodeWrapper {
 		return null;
 	}
 
-	public JcrNodeIteratorWrapper getNodes() throws RepositoryException {
+	public JcrNodeIteratorWrapper getNodesIterator() throws RepositoryException {
 		try {
 			return new JcrNodeIteratorWrapper(node.getNodes(), locale, throwException);
 		} catch (RepositoryException e) {
@@ -175,6 +175,10 @@ public class JcrNodeWrapper {
 			if (throwException) throw e;
 		}
 		return null;
+	}
+
+	public JcrNodeNodesWrapper getNodes() throws RepositoryException {
+		return new JcrNodeNodesWrapper(node, locale, throwException);
 	}
 
 	public int getDepth() throws RepositoryException {
@@ -326,7 +330,7 @@ public class JcrNodeWrapper {
 		return null;
 	}
 	
-
+	
 	public JcrNodeWrapper getFirstParentNodeByPrimaryType(String primaryType) throws RepositoryException {
 		try {
 			Node n = node;
@@ -352,6 +356,7 @@ public class JcrNodeWrapper {
 		return null;
 	}
 
+	
 	public JcrQueryWrapper getSQL2Query() {
 		return new JcrQueryWrapper(javax.jcr.query.Query.JCR_SQL2, node, locale, throwException);
 	}
