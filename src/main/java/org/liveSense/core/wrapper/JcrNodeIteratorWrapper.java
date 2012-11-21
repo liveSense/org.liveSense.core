@@ -70,5 +70,10 @@ public class JcrNodeIteratorWrapper implements Iterator<JcrNodeWrapper> {
 		this.locale = locale;
 	}
 
-	
+	/**
+	 * @return the number of elements in the iterator. If this information is unavailable, returns -1.
+	 */
+	public long getSize() {
+		return iterator.getSize();
+	}
 }
