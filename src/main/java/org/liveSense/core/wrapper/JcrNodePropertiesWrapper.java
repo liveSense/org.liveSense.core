@@ -46,7 +46,7 @@ public class JcrNodePropertiesWrapper extends HashMap<String, Object> {
 
 	
 	@Override
-	public Object get(Object key) {
+	public JcrPropertyWrapper get(Object key) {
 		try {
 
 			String name = (String)key;
