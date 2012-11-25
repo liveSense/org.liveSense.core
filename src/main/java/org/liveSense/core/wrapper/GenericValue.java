@@ -7,15 +7,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.jcr.Binary;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+
 import net.entropysoft.transmorph.ConverterException;
 import net.entropysoft.transmorph.DefaultConverters;
 import net.entropysoft.transmorph.Transmorph;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +45,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 		} else {
 
 			Value value = new Value() {
+				@Override
 				public String getString() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, String.class);
@@ -51,6 +55,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public InputStream getStream() throws IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, InputStream.class);
@@ -60,6 +65,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public long getLong() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, Long.class);
@@ -69,6 +75,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public double getDouble() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, Double.class);
@@ -78,6 +85,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public Calendar getDate() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, Calendar.class);
@@ -87,6 +95,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public boolean getBoolean() throws ValueFormatException, IllegalStateException, RepositoryException {
 					try {
 						return converter.convert(inValue, Boolean.class);
@@ -96,6 +105,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					}
 				}
 
+				@Override
 				public int getType() {
 					if (inValue instanceof String) {
 						return PropertyType.STRING;
@@ -112,10 +122,12 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					} else if (inValue instanceof Boolean) {
 						return PropertyType.BOOLEAN;
 					} else {
-						return PropertyType.UNDEFINED;
+						return PropertyType.STRING;
+						//return PropertyType.UNDEFINED;
 					}
 				}
 
+				@Override
 				public Binary getBinary() throws RepositoryException {
 					return new Binary() {
 
@@ -130,11 +142,13 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 							}
 						}
 
+						@Override
 						public InputStream getStream() throws RepositoryException {
 							if (is == null) is = getStreamFromValue();
 							return is;
 						}
 
+						@Override
 						public int read(byte[] bytes, long l) throws IOException, RepositoryException {
 							if (is == null) is = getStreamFromValue();
 							int readed =  is.read(bytes, offs, (int)l);
@@ -142,6 +156,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 							return readed;
 						}
 
+						@Override
 						public long getSize() throws RepositoryException {
 							if (is == null) is = getStreamFromValue();
 							try {
@@ -151,6 +166,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 							}
 						}
 
+						@Override
 						public void dispose() {
 							if (is == null) is = getStreamFromValue();
 							try {
@@ -163,6 +179,7 @@ public class GenericValue extends ArrayList<Value> implements Serializable {
 					};
 				}
 
+				@Override
 				public BigDecimal getDecimal() throws ValueFormatException, RepositoryException {
 					try {
 						return converter.convert(inValue, BigDecimal.class);
