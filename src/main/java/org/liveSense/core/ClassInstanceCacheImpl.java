@@ -11,6 +11,8 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.liveSense.core.service.OSGIClassLoaderManager;
 import org.osgi.framework.Bundle;
@@ -32,10 +34,10 @@ public class ClassInstanceCacheImpl implements ClassInstanceCache, SynchronousBu
 	private final Map<String, WeakReference<Object>> serviceCache = new ConcurrentHashMap<String, WeakReference<Object>>();
 	private final Map<String, WeakReference<Bundle>> bundles = new ConcurrentHashMap<String, WeakReference<Bundle>>();
 	
-	@Reference
+	@Reference(cardinality=ReferenceCardinality.MANDATORY_UNARY, policy=ReferencePolicy.DYNAMIC)
 	OSGIClassLoaderManager dynamicClassLoaderManager = null;
 	
-	@Reference
+	@Reference(cardinality=ReferenceCardinality.MANDATORY_UNARY, policy=ReferencePolicy.DYNAMIC)
 	PackageAdmin packageAdmin;
 	
 	public static ClassInstanceCacheImpl INSTANCE = new ClassInstanceCacheImpl();

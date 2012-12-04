@@ -29,6 +29,8 @@ import java.util.Map;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.liveSense.core.BundleProxyClassLoader;
 import org.osgi.framework.Bundle;
@@ -66,7 +68,7 @@ public class OSGIClassLoaderManagerImpl implements OSGIClassLoaderManager, Synch
 	 */
 	private DynamicClassLoaderCache allDynamicCompositeClassLoader = null;
 
-	@Reference
+	@Reference(cardinality=ReferenceCardinality.MANDATORY_UNARY, policy=ReferencePolicy.DYNAMIC)
 	PackageAdmin pckAdmin;
 
 	BundleContext bundleContext;
@@ -118,6 +120,7 @@ public class OSGIClassLoaderManagerImpl implements OSGIClassLoaderManager, Synch
 	 * Registering a PachageAdminDynamicClassLoader to the host bundle context and return with the instance.
 	 * When the host bundle stops, the PaclageAdminClassLoader released
 	 */
+	@Override
 	public ClassLoader getPackageAdminClassLoader(BundleContext context) {
 		ServiceReference ref = null;
 		if (context != null) 
@@ -148,6 +151,7 @@ public class OSGIClassLoaderManagerImpl implements OSGIClassLoaderManager, Synch
 	 * Registering a  to the host bundle context and return with the instance.
 	 * When the host bundle stops, the PaclageAdminClassLoader released
 	 */
+	@Override
 	public ClassLoader getBundleClassLoader(BundleContext context, String[] bundleSymbolicNames) {
 		ServiceReference ref = null;
 		if (context != null) 
@@ -181,6 +185,7 @@ public class OSGIClassLoaderManagerImpl implements OSGIClassLoaderManager, Synch
 		return cl;
 	}
 
+	@Override
 	public ClassLoader getBundleClassLoaderByCategory(BundleContext context, String category) {
 		ArrayList<String> bundleSymbolicNames = new ArrayList<String>();
 		for (Bundle bundle : bundleContext.getBundles()) {
@@ -238,6 +243,7 @@ public class OSGIClassLoaderManagerImpl implements OSGIClassLoaderManager, Synch
 	}
 
 
+	@Override
 	public void bundleChanged(BundleEvent event) {
 		synchronized ( this ) {
 			// If the referrer bundle stops we remove all service references
