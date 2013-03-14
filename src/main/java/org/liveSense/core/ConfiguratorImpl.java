@@ -11,7 +11,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(label="%service.name", description="%service.description", immediate=true)
+@Component(label="%configurator.service.name", description="%configurator.service.description", immediate=true, metatype=true)
 @Service
 public class ConfiguratorImpl implements Configurator {
 
@@ -19,8 +19,8 @@ public class ConfiguratorImpl implements Configurator {
 	public static final String PAR_DIGEST_NAME = "pwd.digest";
 	public static final String DEFAULT_DIGEST = "sha1";
 	
-    	@Property(name=PAR_DIGEST_NAME, label="%digest.label", description="%digest.desctiption", value=DEFAULT_DIGEST)
-    	private String digest = DEFAULT_DIGEST;
+	@Property(name=PAR_DIGEST_NAME, label="%digest.label", description="%digest.desctiption", value=DEFAULT_DIGEST)
+	private String digest = DEFAULT_DIGEST;
 
 	public static final String PAR_ENCODING = "default.encoding";
 	public static final String DEFAULT_ENCODING = "utf-8";
@@ -105,18 +105,22 @@ public class ConfiguratorImpl implements Configurator {
 
     }
 
-    public String getDigest() {
+    @Override
+	public String getDigest() {
         return digest;
     }
 
-    public String getEncoding() {
+    @Override
+	public String getEncoding() {
         return encoding;
     }
 
-    public Long getSessionTimeout() {
+    @Override
+	public Long getSessionTimeout() {
         return sessionTimeout;
     }
 
+	@Override
 	public Locale getDefaultLocale() {
 		return loc;
 	}

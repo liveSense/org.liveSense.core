@@ -82,6 +82,10 @@ org_apache_sling_api -> slf4j_api [color="/greys3/2"];
 org_apache_sling_commons_classloader -> slf4j_api [color="/greys3/2"];
 org_apache_felix_eventadmin -> org_apache_felix_metatype [color="/greys3/2"];
 org_apache_felix_eventadmin -> org_apache_sling_commons_logservice [color="/greys3/2"];
-org_apache_felix_eventadmin -> org_apache_felix_configadmin [color="/greys3/2"];
-{rank=same;org_apache_felix_scr;org_apache_jackrabbit_jackrabbit_jcr_commons;org_apache_commons_beanutils;javax_jcr;org_apache_sling_jcr_api;org_apache_sling_commons_osgi;org_apache_felix_http_jetty;net_entropysoft_transmorph;com_google_guava;org_apache_sling_api;org_apache_commons_lang;slf4j_api;};}
+org_apache_felix_eventadmin -> org_apache_felix_configadmin [color="/greys3/2"]
+
+{
+	rank=same;org_apache_felix_scr;org_apache_jackrabbit_jackrabbit_jcr_commons;org_apache_commons_beanutils;javax_jcr;org_apache_sling_jcr_api;org_apache_sling_commons_osgi;org_apache_felix_http_jetty;net_entropysoft_transmorph;com_google_guava;org_apache_sling_api;org_apache_commons_lang;slf4j_api;
+};
+}
 
