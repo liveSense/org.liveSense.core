@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<features name="liveSense-${liveSense.version}-core" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+
+    <feature name='liveSense-core-apache-commons' version="${liveSense.version}" description="liveSense core - apache-commons bundles">
+        <bundle dependency="true">mvn:commons-io/commons-io/1.4</bundle>
+        <bundle dependency="true">mvn:commons-fileupload/commons-fileupload/1.2.2</bundle>
+        <bundle dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+        <bundle dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+        <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
+        <bundle dependency="true">mvn:commons-digester/commons-digester/2.1</bundle>
+        <bundle dependency="true">mvn:commons-dbcp/commons-dbcp/1.4</bundle>
+        <bundle dependency="true">mvn:commons-codec/commons-codec/1.6</bundle>
+        <bundle dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+        <bundle dependency="true">mvn:commons-dbutils/commons-dbutils/1.3</bundle>
+		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/1.3_2</bundle>
+    </feature>
+
+    <feature name='liveSense-core-apache-httpclient3' version="${liveSense.version}" description="liveSense core - apache-commons http client 3 bundles">
+		<feature>liveSense-core-apache-commons</feature>
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/3.1_6</bundle>
+	</feature>
+
+    <feature name='liveSense-core-apache-httpclient4' version="${liveSense.version}" description="liveSense core - apache-commons http client 4 bundles">
+		<feature>liveSense-core-apache-commons</feature>
+        <bundle dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/4.1.2</bundle>
+		<bundle dependency="true">mvn:org.apache.httpcomponents/httpclient-osgi/4.1.2</bundle>
+	</feature>
+
+    <!-- infrastructure services for Sling -->
+	<feature name="liveSense-core-sling-infrastructure" version="${liveSense.version}">
+		<feature>liveSense-core-apache-commons</feature>
+		<feature>http</feature>
+		<feature>http-whiteboard</feature>
+		<feature>eventadmin</feature>
+		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.inventory/1.0.0</bundle>
+	</feature>
+    
+    <!-- javax -->
+	<feature name="liveSense-core-jcr-api" version="${liveSense.version}">
+		<bundle dependency="true">mvn:javax.jcr/jcr/2.0</bundle>
+	</feature>
+    
+    <!-- Apache Derby -->
+	<feature name="liveSense-jdbc-derby" version="10.5.3.0_1">
+		<bundle dependency="true">mvn:org.apache.derby/derby/10.5.3.0_1</bundle>
+	</feature>
+    
+    <!-- Apache Sling -->
+	<feature name="liveSense-core-sling" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-apache-commons</feature>
+		<feature version="${liveSense.version}">liveSense-core-sling-infrastructure</feature>
+		<feature version="${liveSense.version}">liveSense-core-jcr-api</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.api/${sling.api.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.auth.core/${sling.auth.core.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.engine/${sling.engine.version}</bundle>
+        <!-- org.apache.sling.resourceresolver requires jcr -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.resourceresolver/${sling.resourceresolver.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.settings/${sling.settings.version}</bundle>
+        <!-- Apache Sling Commons -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.classloader/${sling.commons.classloader.version}</bundle>
+        <!-- org.apache.sling.commons.json requires jcr -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.json/${sling.commons.json.version}</bundle>
+        <!-- (not using org.apache.sling.commons.log) -->
+        <!-- (not using org.apache.sling.commons.logservice) -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.mime/${sling.commons.mime.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.osgi/${sling.commons.osgi.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.scheduler/${sling.commons.scheduler.version}</bundle>
+        <!-- (not using org.apache.sling.commons.testing) -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.commons.threads/${sling.commons.threads.version}</bundle>
+        <!-- Apache Sling Launchpad -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.launchpad.api/${sling.launchpad.api.version}</bundle>
+		<bundle>mvn:com.github.livesense/org.liveSense.features.sling.bootstrap/1.0.0-SNAPSHOT</bundle>
+
+        <!-- json -->
+		<bundle dependency="true">mvn:org.apache.geronimo.bundles/json/20090211_1</bundle>
+	</feature>
+    
+    <!-- Apache Sling Auth -->
+	<feature name="liveSense-core-sling-auth-form" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.auth.form/${sling.auth.form.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-auth-openid" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.auth.openid/${sling.auth.openid.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-auth-selector" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.auth.selector/${sling.auth.selector.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Extensions -->
+	<feature name="liveSense-core-sling-extension-adapter" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.adapter/${sling.adapter.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-bundleresource" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.bundleresource.impl/${sling.bundleresource.impl.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-discovery" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.api/${sling.discovery.api.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.support/${sling.discovery.support.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-discovery-impl" version="${liveSense.version}">
+		<feature>sling-extension-discovery</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.impl/${sling.discovery.impl.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-discovery-standalone" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling-extension-discovery</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.standalone/${sling.discovery.standalone.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-event" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling-extension-discovery</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.event/${sling.event.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-explorer" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.extensions.explorer/${sling.extensions.explorer.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-fsresource" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.fsresource/${sling.fsresource.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-groovy" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+		<bundle dependency="true">mvn:org.codehaus.groovy/groovy-all/1.8.2</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.extensions.groovy/${sling.extensions.groovy.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-extension-threaddump" version="${liveSense.version}">
+		<bundle>mvn:org.apache.sling/org.apache.sling.extensions.threaddump/${sling.extensions.threaddump.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Fragments -->
+	<feature name="liveSense-core-sling-fragments" version="${liveSense.version}">
+		<bundle>mvn:org.apache.sling/org.apache.sling.fragment.activation/${sling.fragment.activation.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.fragment.transaction/${sling.fragment.transaction.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.fragment.ws/${sling.fragment.ws.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.fragment.xml/${sling.fragment.xml.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Installer -->
+	<feature name="liveSense-core-sling-installer" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling</feature>
+        <!-- api will be merged into core 3.4.8 -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.api/${sling.installer.api.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.console/${sling.installer.console.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.core/${sling.installer.core.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.factory.configuration/${sling.installer.factory.configuration.version}</bundle>
+	</feature>
+
+	<feature name="liveSense-core-sling-installer-provider-file" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling-installer</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.provider.file/${sling.installer.provider.file.version}</bundle>
+	</feature>
+
+	<feature name="liveSense-core-sling-installer-provider-jcr" version="${liveSense.version}">
+		<feature version="${liveSense.version}">liveSense-core-sling-installer</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.installer.provider.jcr/${sling.installer.provider.jcr.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Launchpad -->
+    <!--
+    <feature name="sling-launchpad-content" version="${project.version}">
+        <feature version="${project.version}">sling</feature>
+        <bundle>mvn:org.apache.sling/org.apache.sling.launchpad.content/${sling.launchpad.content.version}</bundle>
+    </feature>
+    -->
+
+	<feature name="liveSense-core-sling-launchpad" version="${liveSense.version}">
+        <!-- Sling with Jackrabbit Repository and Felix Web Console -->
+		<feature>liveSense-core-sling-infrastructure</feature>
+		<feature>liveSense-jdbc-derby</feature>
+		<feature>liveSense-core-sling</feature>
+		<feature>liveSense-core-sling-jcr-jackrabbit</feature>
+		<feature>liveSense-core-sling-auth-form</feature>
+		<feature>liveSense-core-sling-auth-openid</feature>
+		<feature>liveSense-core-sling-auth-selector</feature>
+		<feature>liveSense-core-sling-extension-i18n</feature>
+        <!-- ... -->
+		<feature>liveSense-core-sling-fragments</feature>
+		<feature>liveSense-core-sling-installer</feature>
+		<feature>liveSense-core-sling-scripting-javascript</feature>
+		<feature>liveSense-core-sling-scripting-jsp</feature>
+		<feature>liveSense-core-sling-extension-adapter</feature>
+		<feature>liveSense-core-sling-extension-bundleresource</feature>
+	</feature>
+    
+    <!-- Apache Sling JCR -->
+	<feature name="liveSense-core-sling-jcr" version="${liveSense.version}">
+		<feature>liveSense-core-apache-httpclient3</feature>
+        <feature>liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.api/${sling.jcr.api.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.base/${sling.jcr.base.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.classloader/${sling.jcr.classloader.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.contentloader/${sling.jcr.contentloader.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.davex/${sling.jcr.davex.version}</bundle>
+        <!-- (not using org.apache.sling.jcr.jcr-wrapper) -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.ocm/${sling.jcr.ocm.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.registration/${sling.jcr.registration.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.resource/${sling.jcr.resource.version}</bundle>
+        <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webdav/${sling.jcr.webdav.version}</bundle>
+	</feature>
+
+    <!-- Apache Sling JCr Webconsole -->
+    <feature name="liveSense-core-sling-jcr-webcosole" version="${liveSense.version}">
+        <feature>liveSense-core-webconsole</feature>
+        <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/${sling.jcr.webconsole.version}</bundle>
+    </feature>
+    
+    <!-- Apache Sling JCR Jackrabbit -->
+	<feature name="liveSense-core-sling-jcr-jackrabbit" version="${liveSense.version}">
+		<feature>liveSense-core-sling-jcr</feature>
+		<feature>liveSense-core-tika</feature>
+		<feature>liveSense-core-jackrabbit</feature>
+		<feature>liveSense-core-sling-servlets</feature>
+        <!-- org.apache.sling.jcr.jackrabbit.accessmanager requires org.apache.sling.servlets.post -->
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.jackrabbit.accessmanager/${sling.jcr.jackrabbit.accessmanager.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.jackrabbit.server/${sling.jcr.jackrabbit.server.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.jackrabbit.usermanager/${sling.jcr.jackrabbit.usermanager.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Scripting -->
+	<feature name="liveSense-core-sling-scripting" version="${liveSense.version}">
+		<feature>liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.scripting.api/${sling.scripting.api.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.scripting.core/${sling.scripting.core.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-scripting-javascript" version="${liveSense.version}">
+		<feature>liveSense-core-sling-scripting</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.scripting.javascript/${sling.scripting.javascript.version}</bundle>
+	</feature>
+	<feature name="liveSense-core-sling-scripting-jsp" version="${liveSense.version}">
+		<feature>liveSense-core-sling-scripting</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.scripting.jsp/${sling.scripting.jsp.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.scripting.jsp.taglib/${sling.scripting.jsp.taglib.version}</bundle>
+	</feature>
+    
+    <!-- Apache Sling Servlets -->
+	<feature name="liveSense-core-sling-servlets" version="${liveSense.version}">
+		<feature>liveSense-core-sling</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.servlets.get/${sling.servlets.get.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.servlets.post/${sling.servlets.post.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.servlets.resolver/${sling.servlets.resolver.version}</bundle>
+	</feature>
+    
+    <!-- Apache Jackrabbit -->
+	<feature name="liveSense-core-jackrabbit" version="${liveSense.version}">
+		<feature>liveSense-core-jcr-api</feature>
+		<feature>liveSense-core-apache-commons</feature>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-api/2.4.2</bundle>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.4.2</bundle>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-rmi/2.4.2</bundle>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-spi/2.4.2</bundle>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-spi-commons/2.4.2</bundle>
+		<bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-webdav/2.4.2</bundle>
+	</feature>
+    
+    <!-- Apache Tika -->
+	<feature name="liveSense-core-tika" version="${liveSense.version}">
+		<bundle dependency="true">mvn:org.apache.tika/tika-bundle/1.2</bundle>
+		<bundle dependency="true">mvn:org.apache.tika/tika-core/1.2</bundle>
+	</feature>
+
+	<feature name="liveSense-core-sling-webconsole" description="liveSense core  Sling WebConsole extensions" version="${liveSense.version}">
+		<feature>liveSense-core-sling-launchpad</feature>
+		<bundle>mvn:org.apache.sling/org.apache.sling.extensions.threaddump/${sling.extensions.threaddump.version}</bundle>
+		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/${sling.jcr.webconsole.version}</bundle>
+	</feature>
+
+    <!-- contrib -->
+    <!-- Apache Sling Extensions -->
+	<feature name="liveSense-core-sling-extension-i18n" version="${liveSense.version}">
+		<bundle>mvn:org.apache.sling/org.apache.sling.i18n/${sling.i18n.version}</bundle>
+	</feature>
+
+	<feature name="liveSense-core-webconsole" description="liveSense core  WebConsole for administration and monitoring" version="1.0.0-SNAPSHOT">
+		<feature>eventadmin</feature>
+		<feature>liveSense-core-apache-commons</feature>
+		<feature>http</feature>
+		<config name="org.apache.karaf.webconsole">
+			realm=karaf
+		</config>
+        
+		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.console/${karaf.version}</bundle>
+		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.metatype/1.0.8</bundle>
+        <!-- Normally this should be part of the eventadmin feature. This is a workaround to a console error. -->
+
+		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.instance/${karaf.version}</bundle>
+		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.features/${karaf.version}</bundle>
+		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/${karaf.version}</bundle>
+		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.http/${karaf.version}</bundle>
+		<bundle dependency="true">mvn:org.apache.geronimo.bundles/json/20090211_1</bundle>
+		<bundle dependency="true">mvn:com.github.livesense/org.liveSense.karaf.webconsole.branding/1.0.1-SNAPSHOT</bundle>
+		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.event/1.0.2</bundle>
+		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.memoryusage/1.0.2</bundle>
+	</feature>
+
+    <feature name="liveSense-core-beanvalidation" version="1.0.0-SNAPSHOT" description="liveSense JSR303 beanvalidation modules">
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/4.1.0.Final_2</bundle>
+        <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/2.2.0</bundle>
+    </feature>
+
+    <feature name="liveSense-core-persistence" version="1.0.0-SNAPSHOT" description="liveSense core persistence">
+        <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/2.2.0</bundle>
+    </feature>
+
+    <feature name="liveSense-core-base" version="1.0.0-SNAPSHOT" description="liveSense core Base">
+		<feature>liveSense-core-sling-launchpad</feature>
+		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/11_1</bundle>
+        <bundle dependency="true" start-level="20">mvn:net.sf.transmorph/transmorph/3.1.1</bundle>
+		<bundle>mvn:com.github.livesense/org.liveSense.core/${liveSense.core.version}</bundle>
+	</feature>
+
+</features>
