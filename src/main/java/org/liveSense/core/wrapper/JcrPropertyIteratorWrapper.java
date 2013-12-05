@@ -7,33 +7,65 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
+/**
+ * The Class JcrPropertyIteratorWrapper.
+ */
 public class JcrPropertyIteratorWrapper implements Iterator<JcrPropertyWrapper> {
 
+	/** The iterator. */
 	PropertyIterator iterator;
+	
+	/** The locale. */
 	Locale locale = null;
+	
+	/** The throw exception. */
 	boolean throwException = true;
 
+	/**
+	 * Instantiates a new jcr property iterator wrapper.
+	 *
+	 * @param iterator the iterator
+	 */
 	public JcrPropertyIteratorWrapper(PropertyIterator iterator) {
 		this.iterator = iterator;
 	}
 
+	/**
+	 * Instantiates a new jcr property iterator wrapper.
+	 *
+	 * @param iterator the iterator
+	 * @param locale the locale
+	 */
 	public JcrPropertyIteratorWrapper(PropertyIterator iterator, Locale locale) {
 		this.iterator = iterator;
 		this.locale = locale;
 	}
 
+	/**
+	 * Instantiates a new jcr property iterator wrapper.
+	 *
+	 * @param iterator the iterator
+	 * @param locale the locale
+	 * @param throwException the throw exception
+	 */
 	public JcrPropertyIteratorWrapper(PropertyIterator iterator, Locale locale, boolean throwException) {
 		this.iterator = iterator;
 		this.locale = locale;
 		this.throwException = throwException;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	@Override
 	public boolean hasNext() {
 		if (iterator == null) return false;
 		return iterator.hasNext();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	@Override
 	public JcrPropertyWrapper next() {
 		try {
@@ -45,12 +77,17 @@ public class JcrPropertyIteratorWrapper implements Iterator<JcrPropertyWrapper> 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
 	@Override
 	public void remove() {
 		iterator.remove();
 	}
 
 	/**
+	 * Gets the iterator.
+	 *
 	 * @return the iterator
 	 */
 	public PropertyIterator getIterator() {
@@ -58,6 +95,8 @@ public class JcrPropertyIteratorWrapper implements Iterator<JcrPropertyWrapper> 
 	}
 
 	/**
+	 * Sets the iterator.
+	 *
 	 * @param iterator the iterator to set
 	 */
 	public void setIterator(PropertyIterator iterator) {
@@ -65,6 +104,8 @@ public class JcrPropertyIteratorWrapper implements Iterator<JcrPropertyWrapper> 
 	}
 
 	/**
+	 * Gets the locale.
+	 *
 	 * @return the locale
 	 */
 	public Locale getLocale() {
@@ -72,6 +113,8 @@ public class JcrPropertyIteratorWrapper implements Iterator<JcrPropertyWrapper> 
 	}
 
 	/**
+	 * Sets the locale.
+	 *
 	 * @param locale the locale to set
 	 */
 	public void setLocale(Locale locale) {

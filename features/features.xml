@@ -105,7 +105,7 @@
 		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.support/${sling.discovery.support.version}</bundle>
 	</feature>
 	<feature name="liveSense-core-sling-extension-discovery-impl" version="${liveSense.version}">
-		<feature>sling-extension-discovery</feature>
+		<feature>liveSense-core-sling-extension-discovery</feature>
 		<bundle>mvn:org.apache.sling/org.apache.sling.discovery.impl/${sling.discovery.impl.version}</bundle>
 	</feature>
 	<feature name="liveSense-core-sling-extension-discovery-standalone" version="${liveSense.version}">

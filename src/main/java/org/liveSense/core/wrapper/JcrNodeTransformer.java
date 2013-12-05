@@ -20,6 +20,7 @@ package org.liveSense.core.wrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -28,13 +29,9 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+
 import org.apache.commons.beanutils.BeanUtils;
 
-/**
- *
- * @author Robert Csakany (robson@semmi.se)
- * @created Mar 14, 2010
- */
 public class JcrNodeTransformer {
 	public static Map transformNodeToMap(Node node) throws RepositoryException {
 		HashMap map = new HashMap();
