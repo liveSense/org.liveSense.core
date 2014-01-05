@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<features name="liveSense-${liveSense.version}-core" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+<features name="liveSense-${liveSense.version}-core" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <feature name='liveSense-core-apache-commons' version="${liveSense.version}" description="liveSense core - apache-commons bundles">
         <bundle dependency="true">mvn:commons-io/commons-io/1.4</bundle>
@@ -33,6 +33,7 @@
 		<feature>http</feature>
 		<feature>http-whiteboard</feature>
 		<feature>eventadmin</feature>
+        <feature>scr</feature>
 		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.inventory/1.0.0</bundle>
 	</feature>
     
@@ -74,6 +75,13 @@
 
         <!-- json -->
 		<bundle dependency="true">mvn:org.apache.geronimo.bundles/json/20090211_1</bundle>
+        
+        <conditional>
+            <condition>webconsole</condition>
+            <bundle>mvn:org.apache.felix/org.apache.felix.webconsole.plugins.scriptconsole/1.0.0</bundle>
+            <bundle>mvn:org.apache.sling/org.apache.sling.extensions.threaddump/${sling.extensions.threaddump.version}</bundle>
+            <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/${sling.jcr.webconsole.version}</bundle>
+        </conditional>
 	</feature>
     
     <!-- Apache Sling Auth -->
@@ -204,12 +212,6 @@
         <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webdav/${sling.jcr.webdav.version}</bundle>
 	</feature>
 
-    <!-- Apache Sling JCr Webconsole -->
-    <feature name="liveSense-core-sling-jcr-webcosole" version="${liveSense.version}">
-        <feature>liveSense-core-webconsole</feature>
-        <bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/${sling.jcr.webconsole.version}</bundle>
-    </feature>
-    
     <!-- Apache Sling JCR Jackrabbit -->
 	<feature name="liveSense-core-sling-jcr-jackrabbit" version="${liveSense.version}">
 		<feature>liveSense-core-sling-jcr</feature>
@@ -264,38 +266,37 @@
 		<bundle dependency="true">mvn:org.apache.tika/tika-core/1.2</bundle>
 	</feature>
 
-	<feature name="liveSense-core-sling-webconsole" description="liveSense core  Sling WebConsole extensions" version="${liveSense.version}">
-		<feature>liveSense-core-sling-launchpad</feature>
-		<bundle>mvn:org.apache.sling/org.apache.sling.extensions.threaddump/${sling.extensions.threaddump.version}</bundle>
-		<bundle>mvn:org.apache.sling/org.apache.sling.jcr.webconsole/${sling.jcr.webconsole.version}</bundle>
-	</feature>
-
     <!-- contrib -->
     <!-- Apache Sling Extensions -->
 	<feature name="liveSense-core-sling-extension-i18n" version="${liveSense.version}">
 		<bundle>mvn:org.apache.sling/org.apache.sling.i18n/${sling.i18n.version}</bundle>
 	</feature>
 
-	<feature name="liveSense-core-webconsole" description="liveSense core  WebConsole for administration and monitoring" version="1.0.0-SNAPSHOT">
-		<feature>eventadmin</feature>
-		<feature>liveSense-core-apache-commons</feature>
-		<feature>http</feature>
-		<config name="org.apache.karaf.webconsole">
-			realm=karaf
-		</config>
-        
-		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.console/${karaf.version}</bundle>
-		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.metatype/1.0.8</bundle>
-        <!-- Normally this should be part of the eventadmin feature. This is a workaround to a console error. -->
 
-		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.instance/${karaf.version}</bundle>
-		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.features/${karaf.version}</bundle>
-		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/${karaf.version}</bundle>
-		<bundle dependency="true">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.http/${karaf.version}</bundle>
-		<bundle dependency="true">mvn:org.apache.geronimo.bundles/json/20090211_1</bundle>
-		<bundle dependency="true">mvn:com.github.livesense/org.liveSense.karaf.webconsole.branding/1.0.1-SNAPSHOT</bundle>
-		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.event/1.0.2</bundle>
-		<bundle dependency="true">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.memoryusage/1.0.2</bundle>
+    <feature name="liveSense-core-webconsole" description="liveSense core  WebConsole for administration and monitoring" version="1.0.0-SNAPSHOT">
+        <config name="org.apache.karaf.webconsole">
+            realm=karaf
+        </config>
+        <feature>http</feature>
+        <bundle start-level="30">mvn:org.apache.felix/org.apache.felix.metatype/1.0.8</bundle>
+        <bundle dependency="true">mvn:com.github.livesense/org.liveSense.karaf.webconsole.branding/1.0.1-SNAPSHOT</bundle>
+        <bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.console/${karaf.version}</bundle>
+        <conditional>
+            <condition>eventadmin</condition>
+            <bundle start-level="30">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.event/1.0.2</bundle>
+        </conditional>
+        <conditional>
+            <condition>scr</condition>
+            <bundle start-level="30">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.ds/1.0.0</bundle>
+        </conditional>
+
+        <bundle dependency="true">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.memoryusage/1.0.2</bundle>
+
+        <bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.instance/${karaf.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.features/${karaf.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/${karaf.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.http/${karaf.version}</bundle>
+
 	</feature>
 
     <feature name="liveSense-core-beanvalidation" version="1.0.0-SNAPSHOT" description="liveSense JSR303 beanvalidation modules">
@@ -308,7 +309,7 @@
     </feature>
 
     <feature name="liveSense-core-base" version="1.0.0-SNAPSHOT" description="liveSense core Base">
-		<feature>liveSense-core-sling-launchpad</feature>
+        <feature>liveSense-core-sling-launchpad</feature>
 		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/11_1</bundle>
         <bundle dependency="true" start-level="20">mvn:net.sf.transmorph/transmorph/3.1.1</bundle>
 		<bundle>mvn:com.github.livesense/org.liveSense.core/${liveSense.core.version}</bundle>
