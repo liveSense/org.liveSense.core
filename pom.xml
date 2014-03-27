@@ -26,8 +26,8 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<scm>
-		<connection>scm:git:git://github.com/liveSense/org.liveSense.core.git</connection>
-		<developerConnection>scm:git:git://github.com/liveSense/org.liveSense.core.git</developerConnection>
+		<connection>scm:git:https://github.com/liveSense/org.liveSense.core.git</connection>
+		<developerConnection>scm:git:https://github.com/liveSense/org.liveSense.core.git</developerConnection>
 		<url>https://github.com/liveSense/org.liveSense.core</url>
 	</scm>
 
