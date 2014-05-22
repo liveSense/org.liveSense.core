@@ -2,16 +2,16 @@
 
 <features name="liveSense-${liveSense.version}-core" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
-    <feature name="liveSense-core-beanvalidation" version="1.0.0-SNAPSHOT" description="liveSense JSR303 beanvalidation modules">
+    <feature name="liveSense-core-beanvalidation" version="${liveSense.version}" description="liveSense JSR303 beanvalidation modules">
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/4.1.0.Final_2</bundle>
         <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/2.2.0</bundle>
     </feature>
 
-    <feature name="liveSense-core-persistence" version="1.0.0-SNAPSHOT" description="liveSense core persistence">
+    <feature name="liveSense-core-persistence" version="${liveSense.version}" description="liveSense core persistence">
         <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/2.2.0</bundle>
     </feature>
 
-    <feature name="liveSense-core-base" version="1.0.0-SNAPSHOT" description="liveSense core Base">
+    <feature name="liveSense-core-base" version="${liveSense.version}" description="liveSense core Base">
         <feature>sling</feature>
 		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/11_1</bundle>
         <bundle dependency="true" start-level="20">mvn:net.sf.transmorph/transmorph/3.1.1</bundle>
