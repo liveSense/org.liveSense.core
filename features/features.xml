@@ -16,6 +16,7 @@
 		<bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guava/11_1</bundle>
         <bundle dependency="true" start-level="20">mvn:net.sf.transmorph/transmorph/3.1.1</bundle>
 		<bundle>mvn:com.github.livesense/org.liveSense.core/${liveSense.core.version}</bundle>
+		<bundle>mvn:com.github.livesense/org.liveSense.misc.jcrWrapper/${liveSense.misc.jcrWrapper.version}</bundle>
 	</feature>
 
 </features>
