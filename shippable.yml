@@ -26,6 +26,27 @@ before_script:
   - echo "            <password>${CI_DEPLOY_PASSWORD}</password>" >> target/shippable/settings.xml
   - echo "        </server>" >> target/shippable/settings.xml
   - echo "    </servers>" >> target/shippable/settings.xml
+  - echo "    <profiles>" >> target/shippable/settings.xml
+  - echo "        <profile>" >> target/shippable/settings.xml
+  - echo "            <id>sonatype-oss</id>" >> target/shippable/settings.xml
+  - echo "             <repositories>" >> target/shippable/settings.xml
+  - echo "                  <repository>" >> target/shippable/settings.xml
+  - echo "                      <id>sonatype-oss-snapshot</id>" >> target/shippable/settings.xml
+  - echo "                      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>" >> target/shippable/settings.xml
+  - echo "                       <releases>" >> target/shippable/settings.xml
+  - echo "                           <enabled>false</enabled>" >> target/shippable/settings.xml
+  - echo "                       </releases>" >> target/shippable/settings.xml
+  - echo "                       <snapshots>" >> target/shippable/settings.xml
+  - echo "                           <enabled>true</enabled>" >> target/shippable/settings.xml
+  - echo "                       </snapshots>" >> target/shippable/settings.xml
+  - echo "                  </repository>" >> target/shippable/settings.xml
+  - echo "             </repositories>" >> target/shippable/settings.xml
+  - echo "        </profile>" >> target/shippable/settings.xml
+  - echo "    </profiles>" >> target/shippable/settings.xml
+  - echo "    <activeProfiles>" >> target/shippable/settings.xml
+  - echo "        <!--make the profile active all the time -->" >> target/shippable/settings.xml
+  - echo "        <activeProfile>sonatype-oss</activeProfile>" >> target/shippable/settings.xml
+  - echo "    </activeProfiles>" >> target/shippable/settings.xml
   - echo "</settings>" >> target/shippable/settings.xml
 
 jdk:
