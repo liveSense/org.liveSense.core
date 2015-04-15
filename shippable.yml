@@ -52,6 +52,6 @@ before_script:
 jdk:
   - oraclejdk7
  
-after_success:
+install:
   - mvn deploy --settings target/shippable/settings.xml
  
