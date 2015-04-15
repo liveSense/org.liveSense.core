@@ -3,7 +3,7 @@ language: java
 env:
   - secure: j/GNefjtIMaDm/pNBlShIyX/IU72AweQv6ia5RQHUkasBlGJ80vusGfkYoeo1wrXxriSB8p/X9mdeTJyjKk4q6fqK3tD5P7LY6bqxPSOyF1DOQiQBc3Bb+4B2Gob70pcHXntueMvmx7YT2/OlGO5jgAdVQ3aQ/Po+egQDS2miEL7uRqFHWo7EGi+6mPUfBVRDycrXmHdcGeAABIhYbiv7DlFEC2s7IbH7KSBXWOJrxmzie5rC11sxldzaaoIWCH7RFKjPNh7OoTTY/qHM9i5qTGEgCsiWxxHZvKvJ69cJPkx7hQ3P+YJrHCPUsF2HEE18qY/k2K3yZixUGPVCRATyg==
 
-before_script:
+before_install:
   - mkdir target/shippable
   - echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"" > target/shippable/settings.xml
   - echo "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" >> target/shippable/settings.xml
